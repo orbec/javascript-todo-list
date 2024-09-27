@@ -1,51 +1,73 @@
+import { Status } from "../util/Constants";
 export default class Task {
 
-    title;
-    description;
-    dueDate;
-    priority;
-    status;
-    constructor (title, description, dueDate, priority){
-        this.title = title;
-        this.description = description;
-        this.dueDate = dueDate;
-        this.priority = priority;
-        this.status = "To Do";
+    #title;
+    #description;
+    #dueDate;
+    #priority;
+    #status;
+
+    constructor(title, description, dueDate, priority) {
+        this.#title = title;
+        this.#description = description;
+        this.#dueDate = dueDate;
+        this.#priority = priority;
+        this.#status = Status.TODO;
     }
 
-    getTaskTitle (){
-        return this.title;
+    get title() {
+        return this.#title;
     }
 
-    getTaskDesc() {
-        return this.description;
+    set title(title) {
+        this.#title = title;
     }
 
-    setTaskDesc(description){
-        this.description = description;
+    get description() {
+        return this.#description;
     }
 
-    getTaskDueDate() {
-        return this.dueDate;
+    set description(description) {
+        this.#description = description;
     }
 
-    setTaskDueDate(dueDate){
-        this.dueDate = dueDate
+    get dueDate() {
+        return this.#dueDate;
     }
 
-    getPriority(){
-        return this.priority;
+    set dueDate(dueDate) {
+        this.#dueDate = dueDate
     }
 
-    setPriority(priority){
-        this.priority = priority;
+    get priority() {
+        return this.#priority;
     }
 
-    setStatus(status){
-        this.status = status;
+    set priority(priority) {
+        this.#priority = priority;
     }
 
-    getStatus(){
-        return this.status;
+    set status(status) {
+        this.#status = status;
     }
+
+    get status() {
+        return this.#status;
+    }
+
+    toJSON() {
+        return {
+            title: this.#title,
+            description: this.#description,
+            dueDate: this.#dueDate,
+            priority: this.#priority,
+            status: this.#status
+        }
+    }
+
+    static fromJSON(data) {
+        return Object.assign(new Task(), data);
+    }
+
+
 }

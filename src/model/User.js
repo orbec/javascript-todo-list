@@ -1,26 +1,44 @@
 import Project from "./Project";
 export default class User {
 
-    userName;
-    projectList = [];
+    #userName;
+    #projects;
 
-    constructor(userName){
-        this.userName = userName;
+    constructor(userName) {
+        this.#userName = userName;
+        this.#projects = [];
     }
 
-    getuserName(){
-        return this.userName;
+    get userName() {
+        return this.#userName;
     }
 
-    getProjectList(){
-        return this.projectList;
+    get projects() {
+        return this.#projects;
     }
 
-    addProject(project){
-        this.projectList.push(project);
+    addProject(project) {
+        this.#projects.push(project);
     }
 
-    setProjectList(projectList){
-        this.projectList = projectList;
+    set projects(projects) {
+        this.#projects = projects;
+    }
+
+    deleteProject(projectName) {
+        this.#projects = this.#projects.filter(element => element.title !== projectName);
+    }
+
+    toJSON() {
+        return {
+            userName: this.#userName,
+            projects: this.#projects.map(project => project.toJSON())
+        };
+    }
+
+    static fromJSON(data) {
+        const user = new User(data.userName);
+        user.#projects = data.projects.map(project => Project.fromJSON(project));
+        return user;
     }
 }
