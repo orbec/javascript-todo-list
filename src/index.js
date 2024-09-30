@@ -1,12 +1,11 @@
-import "./style.css";
-import todoListController from "./controllers/TodoListController";
-import { Status, Priority } from "./util/Constants";
+import todoListController from "./controllers/TodoListController.js";
+import screenController from "./controllers/ScreenController";
 
-const nombreUsuario = prompt("Please provide your userName", "guest User");
 
-window.b = Status;
-window.c = Priority;
-window.a =  await todoListController(nombreUsuario);
+
+//const nombreUsuario = prompt("Please provide your userName", "guest User");
+window.b = await screenController();
+b.initialize();
 
 
 

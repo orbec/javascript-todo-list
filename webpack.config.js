@@ -32,7 +32,7 @@ module.exports = {
             //optional - loading images used in js files
             {
                 test: /\.(png|svg|jpg|jpeg|gif)$/i,
-                use: "asset/resource",
+                type: "asset/resource",
             },
             //optional - loading third party fonts
             {

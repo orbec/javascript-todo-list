@@ -56,7 +56,6 @@ export default async function todoListController(userName) {
                 await saveUser();
             }
             user = await getUserFromStorage();
-            console.log(user);
         }
     }
 
@@ -212,24 +211,26 @@ export default async function todoListController(userName) {
 
     const clearUser = () => {
         user.projects = [];
-        clearStorage();
+        saveUser();
     }
 
-
-
-
+    const closeUser = () => {
+        user = null;
+    }
 
     return {
         createProject,
         selectProject,
         getCurrentUser,
-        clearStorage,
+        clearUser,
         deleteProject,
         createTask,
         selectTask,
         deleteTask,
         updateProject,
         updateTask,
+        closeUser,
+
     }
 
 }
