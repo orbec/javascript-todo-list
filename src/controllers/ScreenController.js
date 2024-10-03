@@ -1,5 +1,6 @@
 import "../style.css";
 import todoListController from "./TodoListController";
+import userImage from "../assets/images/avatar-svgrepo-com.svg";
 
 export default function screenController(){
 
@@ -9,6 +10,8 @@ export default function screenController(){
     let user;
 
     const body = document.querySelector("body");
+    const header = document.querySelector("header");
+    const mainContainer = document.querySelector(".main-container");
 
     const showModalCreateUser = () => {
 
@@ -16,46 +19,56 @@ export default function screenController(){
 
     const initialize = () => {
 
-        body.innerHTML = "";
-    
-        const container = document.createElement("div");
-        const header = setHeader(user);
         const sideBar = document.createElement("div");
         const contentArea = document.createElement("div");
-        const footer = document.createElement("div")
 
-        container.classList.add("main-container");
-        header.classList.add("header");
+        header.innerHTML = "";
+        mainContainer.innerHTML = ""
+        
+        setHeader();
+
         sideBar.classList.add("side-bar");
         contentArea.classList.add("content-area");
-        footer.classList.add("footer");
-
-        
-
         
         sideBar.innerHTML = "sidebar";
-        contentArea.innerHTML = "content";
-        footer.innerHTML = "footer";
+        contentArea.innerHTML = "content-area";
 
-        container.appendChild(header);
-        container.appendChild(sideBar);
-        container.appendChild(contentArea);
-        container.appendChild(footer)
+        mainContainer.appendChild(sideBar);
+        mainContainer.appendChild(contentArea);
 
-        body.appendChild(container);
     }
 
-    const setHeader = (user)  => {
+    const setHeader = ()  => {
 
-        const header = document.createElement("div");
+        const appNameContainer = document.createElement("div");
         const userNameContainer = document.createElement("div");
         const headerAction = document.createElement("div");
+        const appName = document.createElement("h2");
+        
+
+        userNameContainer.classList.add("user-info");
+        headerAction.classList.add("user-action");
+
+        appName.innerHTML = "MyToDo JavaScript App";
+
+        appNameContainer.appendChild(appName);
+        header.appendChild(appNameContainer);
         
         if (user){
-            
-            userNameContainer.innerHTML = user.userName;
+            const userName = document.createElement("h3");
+            const userIcon = document.createElement("img");
+            const news = document.createElement("button");
             const logOutBtn = document.createElement("button");
             const tooltipText = document.createElement("span");
+
+            userIcon.src = userImage;
+            news.classList.add("notification");
+            
+            userName.innerHTML = "Welcome, " + user.userName;
+            userNameContainer.appendChild(userIcon);
+            userNameContainer.appendChild(userName);
+            
+            
             tooltipText.classList.add("tooltip-text");
             logOutBtn.classList.add("logout");
             tooltipText.innerHTML = "Log Out";
@@ -73,6 +86,7 @@ export default function screenController(){
                 tooltip.style.visibility = "hidden";
                 tooltip.style.opacity = "0";
             });
+            headerAction.appendChild(news);
             headerAction.appendChild(logOutBtn);
             header.appendChild(userNameContainer);
             header.appendChild(headerAction);
@@ -99,11 +113,9 @@ export default function screenController(){
             });
 
             headerAction.appendChild(logInBtn);
-            header.appendChild(userNameContainer);
             header.appendChild(headerAction);
 
         }
-        return header;
     }
 
     function logOut(){
@@ -119,10 +131,15 @@ export default function screenController(){
         const actionContainer = document.createElement("div");
         actionContainer.appendChild(cancelBtn);
         actionContainer.appendChild(confirmBtn);
-        const confirmLabel = document.createElement("h1");
+        const confirmLabel = document.createElement("h3");
         cancelBtn.innerHTML = "Cancel";
         confirmBtn.innerHTML = "Confirm";
-        cancelBtn.addEventListener("click", () => modal.close());
+        cancelBtn.addEventListener("click", () => {
+            modal.close();
+            modal.remove();
+            
+            
+        });
         confirmBtn.setAttribute("type", "submit");
         if (modalOption === "Log In"){
 
@@ -170,6 +187,7 @@ export default function screenController(){
                 });
                 
                 modal.close();
+                modal.remove();
             });
 
             modal.appendChild(confirmLabel);
@@ -202,6 +220,8 @@ export default function screenController(){
                 }
                 logOut();
                 modal.close();
+                initialize();
+                modal.remove();
             });
             clearDataContainer.appendChild(clearData);
             clearDataContainer.appendChild(clearDataLabel);
