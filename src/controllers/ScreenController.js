@@ -1,6 +1,8 @@
 import "../style.css";
 import todoListController from "./TodoListController";
 import userImage from "../assets/images/avatar-svgrepo-com.svg";
+import projectImg from "../assets/images/folder-share-svgrepo-com.svg";
+import addProjectImg from "../assets/images/add-folder-svgrepo-com.svg";
 
 export default function screenController(){
 
@@ -8,6 +10,7 @@ export default function screenController(){
     let tdController;
 
     let user;
+    let currentProject;
 
     const body = document.querySelector("body");
     const header = document.querySelector("header");
@@ -19,26 +22,28 @@ export default function screenController(){
 
     const initialize = () => {
 
-        const sideBar = document.createElement("div");
+        
         const contentArea = document.createElement("div");
 
-        header.innerHTML = "";
+        
         mainContainer.innerHTML = ""
         
         setHeader();
+        setSideBar();
 
-        sideBar.classList.add("side-bar");
+        
         contentArea.classList.add("content-area");
         
-        sideBar.innerHTML = "sidebar";
+        
         contentArea.innerHTML = "content-area";
 
-        mainContainer.appendChild(sideBar);
         mainContainer.appendChild(contentArea);
 
     }
 
     const setHeader = ()  => {
+
+        header.innerHTML = "";
 
         const appNameContainer = document.createElement("div");
         const userNameContainer = document.createElement("div");
@@ -118,6 +123,52 @@ export default function screenController(){
         }
     }
 
+    const setSideBar = () => {
+
+        const sideBar = document.createElement("div");
+        sideBar.classList.add("side-bar");
+
+        if(user){
+            const addProjectBtn = document.createElement("button");
+            const projectTitleContainer = document.createElement("div");
+            const projectTitle = document.createElement("h2");
+            const pjImg = document.createElement("img");
+            const pjList = document.createElement("div");
+
+            pjList.classList.add("project-list");
+
+            const projectList = user.projects;
+            
+
+            projectList.map(project => {
+                const pjButton = document.createElement("button");
+                pjButton.setAttribute("id", project.title);
+                if(currentProject && project.title === currentProject.title){
+                    pjButton.classList.add("activated");
+                }
+                pjButton.innerHTML = project.title;
+                pjList.appendChild(pjButton);
+            })
+            addProjectBtn.setAttribute("id", "add-project");
+            addProjectBtn.innerHTML = "Add Project";
+            projectTitleContainer.classList.add("title-container");
+            projectTitle.innerHTML = "Projects";
+            pjImg.src = projectImg;
+
+            addProjectBtn.addEventListener("click", (event) => {
+                showAddprojectModal(event);
+            });
+
+            projectTitleContainer.appendChild(pjImg);
+            projectTitleContainer.appendChild(projectTitle);
+            sideBar.appendChild(addProjectBtn);
+            sideBar.appendChild(projectTitleContainer);
+            sideBar.appendChild(pjList);
+        }
+        mainContainer.appendChild(sideBar);
+
+    }
+
     function logOut(){
         user = tdController.closeUser();
         initialize();
@@ -137,8 +188,6 @@ export default function screenController(){
         cancelBtn.addEventListener("click", () => {
             modal.close();
             modal.remove();
-            
-            
         });
         confirmBtn.setAttribute("type", "submit");
         if (modalOption === "Log In"){
@@ -179,11 +228,14 @@ export default function screenController(){
             confirmBtn.addEventListener("click", () => {
                 todoListController(userNameInput.value).then((data) => {
                     tdController = data;
-                    user = tdController.getCurrentUser();
-                    initialize();
-                    if(defaultProjectInput.checked && user.projects.length === 0){
-                        tdController.createProject("default", `Defaul project for user ${userNameInput.value}`);
+                    if(defaultProjectInput.checked){
+                        tdController.createProject("default", `Default project for user ${userNameInput.value}`);
                     }
+                    setTimeout(() => {
+                        user = tdController.getCurrentUser();
+                        initialize();
+                    }, 100);
+                    
                 });
                 
                 modal.close();
@@ -215,6 +267,7 @@ export default function screenController(){
             
             
             confirmBtn.addEventListener("click", () => {
+                console.log(clearData.checked);
                 if(clearData.checked){
                     tdController.clearUser();
                 }
@@ -236,13 +289,87 @@ export default function screenController(){
         modal.showModal();
     }
 
+    function showAddprojectModal(e){
+        const modal = document.createElement("dialog");
+        const cancelBtn = document.createElement("button");
+        const confirmBtn = document.createElement("button");
+        const actionContainer = document.createElement("div");
+        actionContainer.appendChild(cancelBtn);
+        actionContainer.appendChild(confirmBtn);
+        const confirmLabel = document.createElement("h3");
+        cancelBtn.innerHTML = "Cancel";
+        confirmBtn.innerHTML = "Confirm";
+        cancelBtn.addEventListener("click", () => {
+            modal.close();
+            modal.remove();
+        });
+        confirmBtn.setAttribute("type", "submit");
+
+        const titleContainer = document.createElement("div");
+        const titleLabel = document.createElement("label");
+        const titleInput = document.createElement("input");
+
+        const descriptionContainer = document.createElement("div");
+        const descriptionLabel = document.createElement("label");
+        const descriptionInput = document.createElement("input");
+
+        titleLabel.setAttribute("for", "project-title");
+        titleLabel.innerHTML = "Project Title";
+
+        titleInput.setAttribute("type", "input");
+        titleInput.setAttribute("id", "project-title");
+        titleInput.setAttribute("name", "project-title");
+
+        titleContainer.appendChild(titleLabel);
+        titleContainer.appendChild(titleInput);
+
+        descriptionLabel.setAttribute("for", "project-description");
+        descriptionLabel.innerHTML = "Project Description";
+
+        descriptionInput.setAttribute("type", "inpput");
+        descriptionInput.setAttribute("id", "project-description");
+        descriptionInput.setAttribute("name", "project-description");
+
+        descriptionContainer.appendChild(descriptionLabel);
+        descriptionContainer.appendChild(descriptionInput);
+
+        confirmLabel.innerHTML = "Provide a Project's name and Description";
+
+        confirmBtn.addEventListener("click", (event) => {
+
+            const projectTitle = document.querySelector("#project-title");
+            const projectDescription = document.querySelector("#project-description");
+            console.log(projectTitle.value + ", " + projectDescription.value);
+
+            currentProject = tdController.createProject(projectTitle.value, projectDescription.value).currentProject;
+
+            setSideBar();
+            modal.close();
+            modal.remove();
+        });
+
+        modal.appendChild(confirmLabel);
+        modal.appendChild(titleContainer);
+        modal.appendChild(descriptionContainer);
+        modal.appendChild(actionContainer);
+            
+        
+        body.appendChild(modal);
+        modal.showModal();
+    }
+
     function getCurrentUser(){
         return user;
+    }
+
+    function getUser(userName){
+        tdController.getUser(userName);
     }
 
     return {
         initialize,
         getCurrentUser,
+        getUser,
     }
 
     

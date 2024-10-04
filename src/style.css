@@ -47,6 +47,10 @@ footer {
 .side-bar {
     background-color: #a1a1aa;
     grid-area: sidebar;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
 }
 
 .content-area {
@@ -70,8 +74,6 @@ div.user-action {
     gap: 20%;
 }
 
-
-
 button.login,
 button.logout,
 button.notification {
@@ -86,13 +88,22 @@ button.notification {
     border-radius: 50%;
 }
 
-div.user-info img {
-    background-color: #e4e4e7;
+.title-container {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin-top: 10%;
+}
+
+div.user-info img,
+div.side-bar img {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+}
 
-    
+div.user-info img {
+    background-color: #e4e4e7;
+    border-radius: 50%;
 }
 
 button.login {
@@ -122,5 +133,64 @@ button.notification {
     margin-left: -60px;
     transition:opacity 0.3s;
     opacity: 0;
+}
+
+.project-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 10%;
+    gap: 1rem;
+}
+
+#add-project {
+    background-color: inherit;
+    border: none;
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    font-size: 1.2rem;
+    margin-top: 10px;
+    align-items: center;
+    margin-left: 10px;
+    align-self: flex-start;
+}
+
+#add-project:hover {
+    border-radius: 4px;
+    background-color: #e4e4e7;
+}
+
+#add-project::before {
+    content: "";
+    background: url("./assets/images/add-folder-svgrepo-com.svg") no-repeat center center;
+    height: 25px;
+    width: 25px;
+    background-size: contain;
+
+}
+
+.project-list button {
+    width: 100%;
+    background-color: inherit;
+    color: #e4e4e7;
+    border: none;
+    border-bottom: 2px solid;
+    font-size: 1.5rem;
+    
+}
+
+.project-list button:hover {
+    background-color: #52525b;
+    border-bottom: #52525b;
+    border-radius: 4px;
+}
+
+.project-list button.activated {
+    background-color: #e4e4e7;
+    border-bottom: #e4e4e7;
+    color: #52525b;
+    border-radius: 4px;
 }
 
