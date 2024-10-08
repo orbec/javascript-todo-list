@@ -76,7 +76,9 @@ div.user-action {
 
 button.login,
 button.logout,
-button.notification {
+button.notification,
+button.edit,
+button.delete {
     width: 30px;
     height: 30px;
     background-repeat: no-repeat;
@@ -116,6 +118,12 @@ button.logout {
 
 button.notification {
     background-image: url("./assets/images/notification-13-svgrepo-com.svg");
+}
+
+button.login:hover,
+button.logout:hover,
+button.notification:hover {
+    background-color: #a1a1aa;
 }
 
 .tooltip-text {
@@ -192,5 +200,69 @@ button.notification {
     border-bottom: #e4e4e7;
     color: #52525b;
     border-radius: 4px;
+}
+
+.content-area .project-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 70%;
+    padding: 1rem;
+
+}
+
+.project-info button.edit,
+.project-info button.delete {
+    background-color: #a1a1aa;
+}
+
+.project-info button.edit {
+    background-image: url("./assets/images/pencil.svg");
+
+}
+
+.project-info button.delete {
+    background-image: url("./assets/images/trash-svgrepo-com.svg");
+
+}
+
+.project-info .action {
+    display: flex;
+    gap: 1rem;
+}
+
+.content-area .task-container {
+    display: grid;
+    grid-template-areas: "title title title"
+        "left center right";
+    border: 2px solid;
+    grid-template-rows: 1fr 10fr ;
+}
+
+.task-container .title {
+    grid-area: title;
+    width: 100%;
+}
+
+.task-container .todo,
+.task-container .in-progress,
+.task-container .done {
+    width: 100%;
+    height: auto;
+    justify-self: center;
+    text-align: center;
+}
+
+.task-container .todo {
+    grid-area: left;
+    
+}
+
+.task-container .in-progress {
+    grid-area: center;
+}
+
+.task-container .done {
+    grid-area: right;
 }
 

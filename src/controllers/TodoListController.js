@@ -62,7 +62,6 @@ export default async function todoListController(userName) {
     getUser(userName);
 
     async function saveUser() {
-        console.log(user);
         const encryptedUser = await encrypt(key, iv, user);
         store(userName, JSON.stringify(Array.from(new Uint8Array(encryptedUser))));
     }

@@ -22,22 +22,11 @@ export default function screenController(){
 
     const initialize = () => {
 
-        
-        const contentArea = document.createElement("div");
-
-        
-        mainContainer.innerHTML = ""
+        mainContainer.innerHTML = "";
         
         setHeader();
         setSideBar();
-
-        
-        contentArea.classList.add("content-area");
-        
-        
-        contentArea.innerHTML = "content-area";
-
-        mainContainer.appendChild(contentArea);
+        setContentArea();
 
     }
 
@@ -147,6 +136,7 @@ export default function screenController(){
                     pjButton.classList.add("activated");
                 }
                 pjButton.innerHTML = project.title;
+                pjButton.addEventListener("click", (event) => setCurrentProject(event));
                 pjList.appendChild(pjButton);
             })
             addProjectBtn.setAttribute("id", "add-project");
@@ -169,8 +159,91 @@ export default function screenController(){
 
     }
 
+    const setContentArea = () => {
+
+        const contentArea = document.createElement("div");
+
+        if(currentProject){
+            const projectContainer = document.createElement("div");
+            const projectInfoContainer = document.createElement("div");
+            const projectActionContainer = document.createElement("div");
+            const projectTitle = document.createElement("h2");
+            const projectDescription = document.createElement("p");
+            const editProjectBtn = document.createElement("button");
+            const deleteProjectBtn = document.createElement("button");
+
+            
+            projectActionContainer.appendChild(editProjectBtn);
+            projectActionContainer.appendChild(deleteProjectBtn);
+
+            projectContainer.classList.add("project-info");
+            editProjectBtn.classList.add("edit");
+            deleteProjectBtn.classList.add("delete");
+            projectActionContainer.classList.add("action");
+
+            projectTitle.innerHTML = `Project: ${currentProject.title}`;
+            projectDescription.innerHTML = currentProject.description;
+            projectInfoContainer.appendChild(projectTitle);
+            projectInfoContainer.appendChild(projectDescription);
+
+            projectContainer.appendChild(projectInfoContainer);
+            projectContainer.appendChild(projectActionContainer);
+
+            const taskContainer = setTasks();
+
+            contentArea.appendChild(projectContainer);
+            contentArea.appendChild(taskContainer);
+        }
+
+        contentArea.classList.add("content-area");
+
+
+
+
+        mainContainer.appendChild(contentArea);
+    }
+
+    function setTasks(){
+
+        const taskContainer = document.createElement("div");
+
+        const titleContainer = document.createElement("div");
+        const taskTitle = document.createElement("h2");
+        const taskCreateBtn = document.createElement("button");
+        const todoTasks = document.createElement("div");
+        const inProgressTasks = document.createElement("div");
+        const doneTasks = document.createElement("div")
+
+        taskContainer.classList.add("task-container");
+        titleContainer.classList.add("title");
+        taskCreateBtn.classList.add("create");
+        todoTasks.classList.add("todo");
+        inProgressTasks.classList.add("in-progress");
+        doneTasks.classList.add("done");
+
+        todoTasks.innerHTML = "To Do";
+        inProgressTasks.innerHTML = "In Progress";
+        doneTasks.innerHTML = "Done";
+
+        titleContainer.appendChild(taskTitle);
+        titleContainer.appendChild(taskCreateBtn);
+
+
+        taskTitle.innerHTML = "Tasks";
+        taskCreateBtn.innerHTML = "Create Task";
+
+        taskContainer.appendChild(titleContainer);
+        taskContainer.appendChild(todoTasks);
+        taskContainer.appendChild(inProgressTasks);
+        taskContainer.appendChild(doneTasks);
+
+        return taskContainer;
+
+    }
+
     function logOut(){
         user = tdController.closeUser();
+        currentProject = null;
         initialize();
     }
 
@@ -228,11 +301,11 @@ export default function screenController(){
             confirmBtn.addEventListener("click", () => {
                 todoListController(userNameInput.value).then((data) => {
                     tdController = data;
-                    if(defaultProjectInput.checked){
-                        tdController.createProject("default", `Default project for user ${userNameInput.value}`);
-                    }
                     setTimeout(() => {
                         user = tdController.getCurrentUser();
+                        if(defaultProjectInput.checked && user.projects.length === 0){
+                            tdController.createProject("default", `Default project for user ${userNameInput.value}`);
+                        }
                         initialize();
                     }, 100);
                     
@@ -267,7 +340,6 @@ export default function screenController(){
             
             
             confirmBtn.addEventListener("click", () => {
-                console.log(clearData.checked);
                 if(clearData.checked){
                     tdController.clearUser();
                 }
@@ -364,6 +436,13 @@ export default function screenController(){
 
     function getUser(userName){
         tdController.getUser(userName);
+    }
+
+    function setCurrentProject(event){
+        currentProject = tdController.selectProject(event.target.id).currentProject;
+        mainContainer.innerHTML = "";
+        setSideBar();
+        setContentArea();
     }
 
     return {
