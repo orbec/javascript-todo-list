@@ -7,6 +7,12 @@
     font-style: normal;
 }
 
+:root {
+    --dark-color: #52525b;
+    --bright-color: #e4e4e7;
+    --medium-color: #a1a1aa;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -20,9 +26,16 @@ body {
     height: 100vh;
 }
 
+button:hover {
+    transition: background-color 0.3s ease;
+    border-radius: 4px;
+    background-color: var(--bright-color);
+
+}
+
 header, footer {
-    background-color: #52525b;
-    color: #e4e4e7;
+    background-color: var(--dark-color);
+    color: var(--bright-color);
     display: flex;
     padding: 10px;
     
@@ -45,7 +58,7 @@ footer {
 }
 
 .side-bar {
-    background-color: #a1a1aa;
+    background-color: var(--medium-color);
     grid-area: sidebar;
     display: flex;
     flex-direction: column;
@@ -54,8 +67,8 @@ footer {
 }
 
 .content-area {
-    background-color: #e4e4e7;
-    color:#52525b;
+    background-color: var(--bright-color);
+    color:var(--dark-color);
     grid-area: content;
 }
 
@@ -78,11 +91,12 @@ button.login,
 button.logout,
 button.notification,
 button.edit,
-button.delete {
+button.delete,
+button.create {
     width: 30px;
     height: 30px;
     background-repeat: no-repeat;
-    background-size: 100%;
+    background-size: 80%;
     background-position: center;
     position: relative;
     display: inline-block;
@@ -104,7 +118,7 @@ div.side-bar img {
 }
 
 div.user-info img {
-    background-color: #e4e4e7;
+    background-color: var(--bright-color);
     border-radius: 50%;
 }
 
@@ -123,14 +137,14 @@ button.notification {
 button.login:hover,
 button.logout:hover,
 button.notification:hover {
-    background-color: #a1a1aa;
+    background-color: var(--medium-color);
 }
 
 .tooltip-text {
     visibility: hidden;
     width: 70px;
-    background-color: #52525b;
-    color: #e4e4e7;
+    background-color: var(--dark-color);
+    color: var(--bright-color);
     text-align: center;
     border-radius: 6px;
     padding: 5px 0;
@@ -166,8 +180,8 @@ button.notification:hover {
 }
 
 #add-project:hover {
-    border-radius: 4px;
-    background-color: #e4e4e7;
+    background-color: var(--dark-color);
+    color: var(--bright-color);
 }
 
 #add-project::before {
@@ -182,7 +196,7 @@ button.notification:hover {
 .project-list button {
     width: 100%;
     background-color: inherit;
-    color: #e4e4e7;
+    color: var(--bright-color);
     border: none;
     border-bottom: 2px solid;
     font-size: 1.5rem;
@@ -190,15 +204,14 @@ button.notification:hover {
 }
 
 .project-list button:hover {
-    background-color: #52525b;
-    border-bottom: #52525b;
-    border-radius: 4px;
+    background-color: var(--dark-color);
+    border-bottom: var(--dark-color);
 }
 
 .project-list button.activated {
-    background-color: #e4e4e7;
-    border-bottom: #e4e4e7;
-    color: #52525b;
+    background-color: var(--bright-color);
+    border-bottom: var(--bright-color);
+    color: var(--dark-color);
     border-radius: 4px;
 }
 
@@ -212,8 +225,15 @@ button.notification:hover {
 }
 
 .project-info button.edit,
-.project-info button.delete {
-    background-color: #a1a1aa;
+.project-info button.delete,
+.task-container .title button.create {
+    background-color: var(--bright-color);
+}
+
+.project-info button.edit:hover,
+.project-info button.delete:hover,
+.task-container .title button.create:hover {
+    background-color: var(--medium-color);
 }
 
 .project-info button.edit {
@@ -241,7 +261,15 @@ button.notification:hover {
 
 .task-container .title {
     grid-area: title;
-    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 30px;
+    margin: 1.5rem;
+}
+
+.task-container .title button.create {
+    background-image: url("./assets/images/todo-add-svgrepo-com.svg");
 }
 
 .task-container .todo,

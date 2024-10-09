@@ -196,10 +196,6 @@ export default function screenController(){
         }
 
         contentArea.classList.add("content-area");
-
-
-
-
         mainContainer.appendChild(contentArea);
     }
 
@@ -230,7 +226,7 @@ export default function screenController(){
 
 
         taskTitle.innerHTML = "Tasks";
-        taskCreateBtn.innerHTML = "Create Task";
+        taskCreateBtn.addEventListener("click", (event) => showAddTaskModel(event));
 
         taskContainer.appendChild(titleContainer);
         taskContainer.appendChild(todoTasks);
@@ -428,6 +424,103 @@ export default function screenController(){
         
         body.appendChild(modal);
         modal.showModal();
+    }
+
+    function showAddTaskModel(e){
+
+        const modal = document.createElement("dialog");
+        const cancelBtn = document.createElement("button");
+        const confirmBtn = document.createElement("button");
+        const actionContainer = document.createElement("div");
+        actionContainer.appendChild(cancelBtn);
+        actionContainer.appendChild(confirmBtn);
+        const confirmLabel = document.createElement("h3");
+        cancelBtn.innerHTML = "Cancel";
+        confirmBtn.innerHTML = "Confirm";
+        cancelBtn.addEventListener("click", () => {
+            modal.close();
+            modal.remove();
+        });
+        confirmBtn.setAttribute("type", "submit");
+
+        const titleContainer = document.createElement("div");
+        const titleLabel = document.createElement("label");
+        const titleInput = document.createElement("input");
+
+        const descriptionContainer = document.createElement("div");
+        const descriptionLabel = document.createElement("label");
+        const descriptionInput = document.createElement("input");
+
+        const dueDateContainer = document.createElement("div");
+        const dueDateLabel = document.createElement("label");
+        const dueDateInput = document.createElement("input");
+
+        const priorityContainer = document.createElement("div");
+        const priorityLabel = document.createElement("label");
+        const priorityInput = document.createElement("input");
+
+        titleLabel.setAttribute("for", "task-title");
+        titleLabel.innerHTML = "Task Title";
+        titleInput.setAttribute("type", "input");
+        titleInput.setAttribute("id", "task-title");
+        titleInput.setAttribute("name", "task-title");
+        titleContainer.appendChild(titleLabel);
+        titleContainer.appendChild(titleInput);
+
+        descriptionLabel.setAttribute("for", "task-description");
+        descriptionLabel.innerHTML = "Task Description";
+        descriptionInput.setAttribute("type", "input");
+        descriptionInput.setAttribute("id", "task-description");
+        descriptionInput.setAttribute("name", "task-description");
+        descriptionContainer.appendChild(descriptionLabel);
+        descriptionContainer.appendChild(descriptionInput);
+
+        dueDateLabel.setAttribute("for", "task-due-date");
+        dueDateLabel.innerHTML = "Due Date";
+        dueDateInput.setAttribute("type", "input");
+        dueDateInput.setAttribute("id", "task-due-date");
+        dueDateInput.setAttribute("name", "task-due-date");
+        dueDateContainer.appendChild(dueDateLabel);
+        dueDateContainer.appendChild(dueDateInput);
+
+        priorityLabel.setAttribute("for", "task-priority");
+        priorityLabel.innerHTML = "Priority";
+        priorityInput.setAttribute("type", "input");
+        priorityInput.setAttribute("id", "task-priority");
+        priorityInput.setAttribute("name", "task-priority");
+        priorityContainer.appendChild(priorityLabel);
+        priorityContainer.appendChild(priorityInput);
+
+        confirmLabel.innerHTML = "Provide the Task information";
+
+        confirmBtn.addEventListener("click", (event) => {
+
+            const taskTitle = document.querySelector("#task-title");
+            const taskDescription = document.querySelector("#task-description");
+
+            //currentTask = tdController.createTask(taskTitle.value, taskDescription.value).currentTask;
+
+            //setTaskLocation(currentTask.status);
+            modal.close();
+            modal.remove();
+        });
+
+        modal.appendChild(confirmLabel);
+        modal.appendChild(titleContainer);
+        modal.appendChild(descriptionContainer);
+        modal.appendChild(dueDateContainer);
+        modal.appendChild(priorityContainer);
+        modal.appendChild(actionContainer);
+            
+        
+        body.appendChild(modal);
+        modal.showModal();
+
+    }
+
+    function setTaskLocation(taskStatus){
+        console.log(taskStatus);
+
     }
 
     function getCurrentUser(){
