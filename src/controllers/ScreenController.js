@@ -530,7 +530,7 @@ export default function screenController(){
             currentTask = objTask.currentTask;
 
             if(currentTask){
-                 setTaskLocation(currentTask.status);
+                 setTaskLocation(currentTask);
             }
             
             modal.close();
