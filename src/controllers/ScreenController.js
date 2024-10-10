@@ -2,7 +2,7 @@ import "../style.css";
 import todoListController from "./TodoListController";
 import userImage from "../assets/images/avatar-svgrepo-com.svg";
 import projectImg from "../assets/images/folder-share-svgrepo-com.svg";
-import addProjectImg from "../assets/images/add-folder-svgrepo-com.svg";
+import { Priority } from "../util/Constants";
 
 export default function screenController(){
 
@@ -11,6 +11,7 @@ export default function screenController(){
 
     let user;
     let currentProject;
+    let currentTask;
 
     const body = document.querySelector("body");
     const header = document.querySelector("header");
@@ -193,10 +194,18 @@ export default function screenController(){
 
             contentArea.appendChild(projectContainer);
             contentArea.appendChild(taskContainer);
+
+
+            
         }
 
         contentArea.classList.add("content-area");
         mainContainer.appendChild(contentArea);
+
+        if(currentProject){
+            currentProject.tasks.map((task) => setTaskLocation(task));
+
+        }
     }
 
     function setTasks(){
@@ -407,7 +416,6 @@ export default function screenController(){
 
             const projectTitle = document.querySelector("#project-title");
             const projectDescription = document.querySelector("#project-description");
-            console.log(projectTitle.value + ", " + projectDescription.value);
 
             currentProject = tdController.createProject(projectTitle.value, projectDescription.value).currentProject;
 
@@ -428,7 +436,9 @@ export default function screenController(){
 
     function showAddTaskModel(e){
 
+
         const modal = document.createElement("dialog");
+        const form = document.createElement("form");
         const cancelBtn = document.createElement("button");
         const confirmBtn = document.createElement("button");
         const actionContainer = document.createElement("div");
@@ -457,7 +467,10 @@ export default function screenController(){
 
         const priorityContainer = document.createElement("div");
         const priorityLabel = document.createElement("label");
-        const priorityInput = document.createElement("input");
+        const priorityInput = document.createElement("select");
+        const lowPriority = document.createElement("option");
+        const mediumPriority = document.createElement("option");
+        const highPriority = document.createElement("option");
 
         titleLabel.setAttribute("for", "task-title");
         titleLabel.innerHTML = "Task Title";
@@ -477,7 +490,7 @@ export default function screenController(){
 
         dueDateLabel.setAttribute("for", "task-due-date");
         dueDateLabel.innerHTML = "Due Date";
-        dueDateInput.setAttribute("type", "input");
+        dueDateInput.setAttribute("type", "date");
         dueDateInput.setAttribute("id", "task-due-date");
         dueDateInput.setAttribute("name", "task-due-date");
         dueDateContainer.appendChild(dueDateLabel);
@@ -485,9 +498,20 @@ export default function screenController(){
 
         priorityLabel.setAttribute("for", "task-priority");
         priorityLabel.innerHTML = "Priority";
-        priorityInput.setAttribute("type", "input");
         priorityInput.setAttribute("id", "task-priority");
         priorityInput.setAttribute("name", "task-priority");
+
+        lowPriority.value = Priority.LOW;
+        lowPriority.innerHTML = "Low"
+        mediumPriority.value = Priority.MEDIUM;
+        mediumPriority.innerHTML = "Medium";
+        highPriority.value = Priority.HIGH;
+        highPriority.innerHTML = "High"
+
+        priorityInput.appendChild(lowPriority);
+        priorityInput.appendChild(mediumPriority);
+        priorityInput.appendChild(highPriority);
+        
         priorityContainer.appendChild(priorityLabel);
         priorityContainer.appendChild(priorityInput);
 
@@ -495,22 +519,33 @@ export default function screenController(){
 
         confirmBtn.addEventListener("click", (event) => {
 
+            event.preventDefault();
+
             const taskTitle = document.querySelector("#task-title");
             const taskDescription = document.querySelector("#task-description");
+            const taskDueDate = document.querySelector("#task-due-date");
+            const taskPriority = document.querySelector("#task-priority");
 
-            //currentTask = tdController.createTask(taskTitle.value, taskDescription.value).currentTask;
+            const objTask = tdController.createTask(taskTitle.value, taskDescription.value, taskDueDate.value, taskPriority.value);
+            currentTask = objTask.currentTask;
 
-            //setTaskLocation(currentTask.status);
+            if(currentTask){
+                 setTaskLocation(currentTask.status);
+            }
+            
             modal.close();
             modal.remove();
         });
 
+        form.appendChild(titleContainer);
+        form.appendChild(descriptionContainer);
+        form.appendChild(dueDateContainer);
+        form.appendChild(priorityContainer);
+        form.appendChild(actionContainer);
+
         modal.appendChild(confirmLabel);
-        modal.appendChild(titleContainer);
-        modal.appendChild(descriptionContainer);
-        modal.appendChild(dueDateContainer);
-        modal.appendChild(priorityContainer);
-        modal.appendChild(actionContainer);
+        modal.appendChild(form);
+        
             
         
         body.appendChild(modal);
@@ -518,8 +553,26 @@ export default function screenController(){
 
     }
 
-    function setTaskLocation(taskStatus){
+    function setTaskLocation(task){
+        
+        const taskStatus = task.status;
         console.log(taskStatus);
+        let statusContainer;
+        switch(taskStatus){
+            case "to do":
+                statusContainer = document.querySelector(".todo");
+                break;
+            case "in progress":
+                statusContainer = document.querySelector(".in-progress");
+                break;
+            case "done":
+                statusContainer = document.querySelector(".done");
+        }
+
+        const taskDiv = document.createElement("div");
+        taskDiv.innerHTML = `${task.title}, ${task.description}, ${task.dueDate}, ${task.priority}, ${task.status}`;
+        statusContainer.appendChild(taskDiv);
+
 
     }
 
