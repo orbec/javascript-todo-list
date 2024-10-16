@@ -2,10 +2,9 @@ import "../style.css";
 import todoListController from "./TodoListController";
 import userImage from "../assets/images/avatar-svgrepo-com.svg";
 import projectImg from "../assets/images/folder-share-svgrepo-com.svg";
-import { Priority } from "../util/Constants";
+import { modalConfigurations } from "../util/ModalConfs";
 
 export default function screenController(){
-
 
     let tdController;
 
@@ -17,8 +16,173 @@ export default function screenController(){
     const header = document.querySelector("header");
     const mainContainer = document.querySelector(".main-container");
 
-    const showModalCreateUser = () => {
+    const createFormGroup = (field) => {
+        const formGroup = document.createElement("div");
+        formGroup.classList.add("form-group");
+        formGroup.classList.add("tooltip");
 
+        const input = document.createElement(field.type === "select" ? "select" : field.type === "textarea" ? "textarea" : "input");
+        input.id = field.id;
+        input.name = field.name;
+        input.placeholder = " ";
+        input.required = field.inputType === "checkbox" ? false : true;
+        if (field.type === "input" && field.inputType){
+            input.type = field.inputType;
+        }
+
+        if(field.type === "textarea"){
+            input.maxLength = 200;
+        }else if(field.type === "input" && field.inputType === "text"){
+            input.maxLength = 50;
+        }
+
+        if(field.type === "select"){
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            defaultOption.hidden = true;
+            input.appendChild(defaultOption);
+
+            field.options.forEach(optionValue => {
+                const option = document.createElement("option");
+            option.value = optionValue.value;
+            option.textContent = optionValue.text;
+            input.appendChild(option);
+            });
+        }
+
+        const label = document.createElement("label");
+        label.htmlFor = field.id;
+        label.textContent = field.label;
+
+        const tooltip = document.createElement("span");
+        tooltip.classList.add("tooltip-text");
+        tooltip.textContent = field.tooltip;
+
+        formGroup.appendChild(input);
+        formGroup.appendChild(label);
+        formGroup.appendChild(tooltip);
+
+        return formGroup;
+    }
+
+    const submitForm = (event) => {
+
+        const modalId = event.target.parentElement.id;
+        const formData = new FormData(event.target);
+        
+        switch (modalId){
+            case "logInModal":
+                const userName = formData.get("user-name");
+                const defaultProject = formData.get("default-project");
+                todoListController(userName).then((data) => {
+                    tdController = data;
+                    setTimeout(() => {
+                        user = tdController.getCurrentUser();
+                        if(defaultProject === "on" && user.projects.length === 0){
+                            tdController.createProject("default", `Default project for user ${userName}`);
+                        }
+                        initialize();
+                    }, 100);
+                    
+                });
+                break;
+            case "logOutModal":
+                const clearData = formData.get("clear-data");
+                if(clearData === "on"){
+                    tdController.clearUser();
+                }
+                user = tdController.closeUser();
+                currentProject = null;
+                initialize();
+                break;
+            case "createPjModal":
+                const projectTitle = formData.get("project-title");
+                const projectDescription = formData.get("project-description");
+
+                currentProject = tdController.createProject(projectTitle, projectDescription).currentProject;
+
+                setSideBar();
+                setContentArea();
+                break;
+            case "createTaskModal":
+                const taskTitle = formData.get("task-title");
+                const taskDescription = formData.get("task-description");
+                const taskDueDate = formData.get("task-due-date");
+                const taskPriority = formData.get("task-priority");
+
+                const objTask = tdController.createTask(taskTitle, taskDescription, taskDueDate, taskPriority);
+                currentTask = objTask.currentTask;
+
+                if(currentTask){
+                    setTaskLocation(currentTask);
+                }
+        }
+
+    }
+
+    const createModal = (modalId) => {
+
+        const dialog = document.createElement("dialog");
+        const diagConf = modalConfigurations.filter((modalConf) => modalConf.id === modalId);
+        const conf = diagConf.at(0);
+
+        if(conf){
+
+            dialog.id = conf.id;
+
+            const modalHeader = document.createElement("h3");
+            modalHeader.textContent = conf.header;
+
+            dialog.appendChild(modalHeader);
+
+            const form = document.createElement("form");
+            form.method = "dialog";
+
+            conf.fields.forEach(field => {
+                form.appendChild(createFormGroup(field));
+            });
+
+            const dialogButtons = document.createElement("div");
+            dialogButtons.classList.add("dialog-buttons");
+
+            const cancelBtn = document.createElement("button");
+            cancelBtn.type = "button";
+            cancelBtn.textContent = "Cancel";
+            cancelBtn.id = "cancel-button";
+
+            const submitBtn = document.createElement("button");
+            submitBtn.type = "submit";
+            submitBtn.textContent = "Submit";
+
+            dialogButtons.appendChild(cancelBtn);
+            dialogButtons.appendChild(submitBtn);
+
+            form.appendChild(dialogButtons);
+
+            dialog.appendChild(form);
+            body.appendChild(dialog);
+
+            cancelBtn.addEventListener("click", (event) => {
+                dialog.close();
+                dialog.remove();
+                
+            });
+
+            form.addEventListener("submit", (event) => {
+                event.preventDefault();
+
+                submitForm(event);
+
+                dialog.close();
+                dialog.remove();
+            })
+
+        }
+        dialog.showModal();
+
+        
     }
 
     const initialize = () => {
@@ -246,310 +410,29 @@ export default function screenController(){
 
     }
 
-    function logOut(){
-        user = tdController.closeUser();
-        currentProject = null;
-        initialize();
-    }
-
     function showHeaderActionModal(e){
+
         const modalOption = e.target.querySelector(".tooltip-text").innerHTML;
-        const modal = document.createElement("dialog");
-        const cancelBtn = document.createElement("button");
-        const confirmBtn = document.createElement("button");
-        const actionContainer = document.createElement("div");
-        actionContainer.appendChild(cancelBtn);
-        actionContainer.appendChild(confirmBtn);
-        const confirmLabel = document.createElement("h3");
-        cancelBtn.innerHTML = "Cancel";
-        confirmBtn.innerHTML = "Confirm";
-        cancelBtn.addEventListener("click", () => {
-            modal.close();
-            modal.remove();
-        });
-        confirmBtn.setAttribute("type", "submit");
+
         if (modalOption === "Log In"){
 
-            const form = document.createElement("form");
-
-            const userNameContainer = document.createElement("div");
-            const userNameLabel = document.createElement("label");
-            const userNameInput = document.createElement("input");
-
-            const defaultProjectContainer = document.createElement("div");
-            const defaultProjectLabel = document.createElement("label");
-            const defaultProjectInput = document.createElement("input");
-
-            userNameLabel.setAttribute("for", "user-name");
-            userNameLabel.innerHTML = "User Name";
-
-            userNameInput.setAttribute("type", "input");
-            userNameInput.setAttribute("id", "user-name");
-            userNameInput.setAttribute("name", "user-name");
-            userNameInput.value = "guest User";
-
-            userNameContainer.appendChild(userNameLabel);
-            userNameContainer.appendChild(userNameInput);
-
-            defaultProjectLabel.setAttribute("for", "default-project");
-            defaultProjectLabel.innerHTML = "Do you want to include a default project? This only works if you are a new user";
-
-            defaultProjectInput.setAttribute("type", "checkbox");
-            defaultProjectInput.setAttribute("id", "default-project");
-            defaultProjectInput.setAttribute("name", "default-project");
-
-            defaultProjectContainer.appendChild(defaultProjectInput);
-            defaultProjectContainer.appendChild(defaultProjectLabel);
-
-            confirmLabel.innerHTML = "Provide a user name, default 'guest User'";
-
-            confirmBtn.addEventListener("click", () => {
-                todoListController(userNameInput.value).then((data) => {
-                    tdController = data;
-                    setTimeout(() => {
-                        user = tdController.getCurrentUser();
-                        if(defaultProjectInput.checked && user.projects.length === 0){
-                            tdController.createProject("default", `Default project for user ${userNameInput.value}`);
-                        }
-                        initialize();
-                    }, 100);
-                    
-                });
-                
-                modal.close();
-                modal.remove();
-            });
-
-            modal.appendChild(confirmLabel);
-            modal.appendChild(userNameContainer);
-            modal.appendChild(defaultProjectContainer);
-            modal.appendChild(actionContainer);
-            
-
+            createModal("logInModal");
+            document.querySelector("#user-name").value = "guest User";
 
         }else if (modalOption === "Log Out"){
-            
-            const clearData = document.createElement("input");
-            const clearDataContainer = document.createElement("div");
-            const clearDataLabel = document.createElement("label");
 
-            clearData.setAttribute("type", "checkbox");
-            clearData.setAttribute("id", "clear-data");
-            clearData.setAttribute("name", "clear-data");
-            clearData.setAttribute("value", "1");
-
-            clearDataLabel.setAttribute("for", "clear-data");
-            clearDataLabel.innerHTML = "Do you want to clear your personal data?";
-            actionContainer.classList.add("action-container");
-            confirmLabel.innerHTML = "Are you sure you want to Quit?"
-            
-            
-            confirmBtn.addEventListener("click", () => {
-                if(clearData.checked){
-                    tdController.clearUser();
-                }
-                logOut();
-                modal.close();
-                initialize();
-                modal.remove();
-            });
-            clearDataContainer.appendChild(clearData);
-            clearDataContainer.appendChild(clearDataLabel);
-
-            actionContainer.appendChild(cancelBtn);
-            actionContainer.appendChild(confirmBtn);
-            modal.appendChild(confirmLabel);
-            modal.appendChild(clearDataContainer);
-            modal.appendChild(actionContainer);
+            createModal("logOutModal");
         }
-        body.appendChild(modal);
-        modal.showModal();
     }
 
     function showAddprojectModal(e){
-        const modal = document.createElement("dialog");
-        const cancelBtn = document.createElement("button");
-        const confirmBtn = document.createElement("button");
-        const actionContainer = document.createElement("div");
-        actionContainer.appendChild(cancelBtn);
-        actionContainer.appendChild(confirmBtn);
-        const confirmLabel = document.createElement("h3");
-        cancelBtn.innerHTML = "Cancel";
-        confirmBtn.innerHTML = "Confirm";
-        cancelBtn.addEventListener("click", () => {
-            modal.close();
-            modal.remove();
-        });
-        confirmBtn.setAttribute("type", "submit");
 
-        const titleContainer = document.createElement("div");
-        const titleLabel = document.createElement("label");
-        const titleInput = document.createElement("input");
-
-        const descriptionContainer = document.createElement("div");
-        const descriptionLabel = document.createElement("label");
-        const descriptionInput = document.createElement("input");
-
-        titleLabel.setAttribute("for", "project-title");
-        titleLabel.innerHTML = "Project Title";
-
-        titleInput.setAttribute("type", "input");
-        titleInput.setAttribute("id", "project-title");
-        titleInput.setAttribute("name", "project-title");
-
-        titleContainer.appendChild(titleLabel);
-        titleContainer.appendChild(titleInput);
-
-        descriptionLabel.setAttribute("for", "project-description");
-        descriptionLabel.innerHTML = "Project Description";
-
-        descriptionInput.setAttribute("type", "inpput");
-        descriptionInput.setAttribute("id", "project-description");
-        descriptionInput.setAttribute("name", "project-description");
-
-        descriptionContainer.appendChild(descriptionLabel);
-        descriptionContainer.appendChild(descriptionInput);
-
-        confirmLabel.innerHTML = "Provide a Project's name and Description";
-
-        confirmBtn.addEventListener("click", (event) => {
-
-            const projectTitle = document.querySelector("#project-title");
-            const projectDescription = document.querySelector("#project-description");
-
-            currentProject = tdController.createProject(projectTitle.value, projectDescription.value).currentProject;
-
-            setSideBar();
-            modal.close();
-            modal.remove();
-        });
-
-        modal.appendChild(confirmLabel);
-        modal.appendChild(titleContainer);
-        modal.appendChild(descriptionContainer);
-        modal.appendChild(actionContainer);
-            
-        
-        body.appendChild(modal);
-        modal.showModal();
+        createModal("createPjModal");
     }
 
     function showAddTaskModel(e){
 
-
-        const modal = document.createElement("dialog");
-        const form = document.createElement("form");
-        const cancelBtn = document.createElement("button");
-        const confirmBtn = document.createElement("button");
-        const actionContainer = document.createElement("div");
-        actionContainer.appendChild(cancelBtn);
-        actionContainer.appendChild(confirmBtn);
-        const confirmLabel = document.createElement("h3");
-        cancelBtn.innerHTML = "Cancel";
-        confirmBtn.innerHTML = "Confirm";
-        cancelBtn.addEventListener("click", () => {
-            modal.close();
-            modal.remove();
-        });
-        confirmBtn.setAttribute("type", "submit");
-
-        const titleContainer = document.createElement("div");
-        const titleLabel = document.createElement("label");
-        const titleInput = document.createElement("input");
-
-        const descriptionContainer = document.createElement("div");
-        const descriptionLabel = document.createElement("label");
-        const descriptionInput = document.createElement("input");
-
-        const dueDateContainer = document.createElement("div");
-        const dueDateLabel = document.createElement("label");
-        const dueDateInput = document.createElement("input");
-
-        const priorityContainer = document.createElement("div");
-        const priorityLabel = document.createElement("label");
-        const priorityInput = document.createElement("select");
-        const lowPriority = document.createElement("option");
-        const mediumPriority = document.createElement("option");
-        const highPriority = document.createElement("option");
-
-        titleLabel.setAttribute("for", "task-title");
-        titleLabel.innerHTML = "Task Title";
-        titleInput.setAttribute("type", "input");
-        titleInput.setAttribute("id", "task-title");
-        titleInput.setAttribute("name", "task-title");
-        titleContainer.appendChild(titleLabel);
-        titleContainer.appendChild(titleInput);
-
-        descriptionLabel.setAttribute("for", "task-description");
-        descriptionLabel.innerHTML = "Task Description";
-        descriptionInput.setAttribute("type", "input");
-        descriptionInput.setAttribute("id", "task-description");
-        descriptionInput.setAttribute("name", "task-description");
-        descriptionContainer.appendChild(descriptionLabel);
-        descriptionContainer.appendChild(descriptionInput);
-
-        dueDateLabel.setAttribute("for", "task-due-date");
-        dueDateLabel.innerHTML = "Due Date";
-        dueDateInput.setAttribute("type", "date");
-        dueDateInput.setAttribute("id", "task-due-date");
-        dueDateInput.setAttribute("name", "task-due-date");
-        dueDateContainer.appendChild(dueDateLabel);
-        dueDateContainer.appendChild(dueDateInput);
-
-        priorityLabel.setAttribute("for", "task-priority");
-        priorityLabel.innerHTML = "Priority";
-        priorityInput.setAttribute("id", "task-priority");
-        priorityInput.setAttribute("name", "task-priority");
-
-        lowPriority.value = Priority.LOW;
-        lowPriority.innerHTML = "Low"
-        mediumPriority.value = Priority.MEDIUM;
-        mediumPriority.innerHTML = "Medium";
-        highPriority.value = Priority.HIGH;
-        highPriority.innerHTML = "High"
-
-        priorityInput.appendChild(lowPriority);
-        priorityInput.appendChild(mediumPriority);
-        priorityInput.appendChild(highPriority);
-        
-        priorityContainer.appendChild(priorityLabel);
-        priorityContainer.appendChild(priorityInput);
-
-        confirmLabel.innerHTML = "Provide the Task information";
-
-        confirmBtn.addEventListener("click", (event) => {
-
-            event.preventDefault();
-
-            const taskTitle = document.querySelector("#task-title");
-            const taskDescription = document.querySelector("#task-description");
-            const taskDueDate = document.querySelector("#task-due-date");
-            const taskPriority = document.querySelector("#task-priority");
-
-            const objTask = tdController.createTask(taskTitle.value, taskDescription.value, taskDueDate.value, taskPriority.value);
-            currentTask = objTask.currentTask;
-
-            if(currentTask){
-                 setTaskLocation(currentTask);
-            }
-            
-            modal.close();
-            modal.remove();
-        });
-
-        form.appendChild(titleContainer);
-        form.appendChild(descriptionContainer);
-        form.appendChild(dueDateContainer);
-        form.appendChild(priorityContainer);
-        form.appendChild(actionContainer);
-
-        modal.appendChild(confirmLabel);
-        modal.appendChild(form);
-        
-            
-        
-        body.appendChild(modal);
-        modal.showModal();
+        createModal("createTaskModal");
 
     }
 
