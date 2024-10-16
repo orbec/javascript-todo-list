@@ -106,6 +106,17 @@ export default function screenController(){
                 setSideBar();
                 setContentArea();
                 break;
+            case "editPjModal":
+                currentProject.description = formData.get("project-description");
+                tdController.updateProject(currentProject);
+                document.querySelector(".project-info").querySelector("p").textContent = currentProject.description;
+                break;
+            case "deletePjModal":
+                tdController.deleteProject(currentProject);
+                currentProject = null;
+                initialize();
+                break;
+
             case "createTaskModal":
                 const taskTitle = formData.get("task-title");
                 const taskDescription = formData.get("task-description");
@@ -118,6 +129,21 @@ export default function screenController(){
                 if(currentTask){
                     setTaskLocation(currentTask);
                 }
+                break;
+            case "ediTaskModal":
+                currentTask.description = formData.get("task-description");
+                currentTask.dueDate = formData.get("task-due-date");
+                currentTask.priority = formData.get("task-priority");
+                currentTask.status = formData.get("task-status");
+                tdController.updateTask(currentTask);
+                currentTask = null;
+                initialize();
+                break;
+            case "deleteTaskModal":
+                tdController.deleteTask(currentTask);
+                currentTask = null;
+                initialize();
+                break;
         }
 
     }
@@ -327,6 +353,7 @@ export default function screenController(){
     const setContentArea = () => {
 
         const contentArea = document.createElement("div");
+        contentArea.innerHTML = "";
 
         if(currentProject){
             const projectContainer = document.createElement("div");
@@ -364,7 +391,11 @@ export default function screenController(){
                 const modal = document.getElementById("editPjModal");
                 modal.querySelector("h3").textContent = currentProject.title;
                 document.getElementById("project-description").value = currentProject.description;
-        })
+            });
+
+            deleteProjectBtn.addEventListener("click", (event) => {
+                createModal("deletePjModal");
+            });
             
         }
 
@@ -487,18 +518,35 @@ export default function screenController(){
         taskTitle.textContent = task.title;
 
         const taskPriority = document.createElement("p");
-        taskPriority.textContent = `Priority ${task.priority}`;
+
+        if (task.priority === "1"){
+            taskPriority.textContent = `High Priority `;
+        }else if(task.priority === "2"){
+            taskPriority.textContent = `Medium Priority `;
+        }else{
+            taskPriority.textContent = `Low Priority `;
+        }
 
         const taskAction = document.createElement("div");
         taskAction.classList.add("task-action");
 
         const editBtn = document.createElement("button");
         editBtn.classList.add("edit");
-        editBtn.addEventListener("click", () => console.log("edit task"));
+        editBtn.addEventListener("click", (event) => {
+            const taskId = event.target.parentElement.parentElement.dataset.id;
+            currentTask = tdController.selectTask(taskId).currentTask;
+            createModal("ediTaskModal");
+            const modal = document.getElementById("ediTaskModal");
+            modal.querySelector("h3").textContent = currentTask.title;
+            document.getElementById("task-description").value = currentTask.description;
+            document.getElementById("task-due-date").value = currentTask.dueDate;
+            document.getElementById("task-priority").value = currentTask.priority;
+            document.getElementById("task-status").value = currentTask.status;
+        });
 
         const deleteBtn = document.createElement ("button");
         deleteBtn.classList.add("delete");
-        deleteBtn.addEventListener("click", () => console.log("delete task"));
+        deleteBtn.addEventListener("click", () => createModal("deleteTaskModal"));
 
         taskAction.appendChild(editBtn);
         taskAction.appendChild(deleteBtn);

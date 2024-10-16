@@ -4,12 +4,14 @@ import { genIv, genKey, encrypt, decrypt, exportKey, importKey } from "../util/E
 import User from "../model/User.js";
 import ProjectController from "./ProjectController.js"
 import TaskController from "./TaskController.js";
+import UserController from "./UserController.js";
 
 export default async function todoListController(userName) {
 
     let user = new User(userName);
     const pjController = ProjectController();
     const taskController = TaskController();
+    const userController = UserController();
     let currentProject;
     let currentTask;
 
@@ -107,10 +109,10 @@ export default async function todoListController(userName) {
 
     }
 
-    const deleteProject = function () {
+    const deleteProject = function (project) {
 
-        if (user && currentProject) {
-            const objProject = pjController.deleteProject(user, currentProject.title);
+        if (user && project) {
+            const objProject = userController.deleteProject(user, project.title);
             currentProject = null;
             user.projects = objProject.projects;
             saveUser();
@@ -120,10 +122,10 @@ export default async function todoListController(userName) {
 
     }
 
-    const updateProject = (newDescription) => {
+    const updateProject = (project) => {
 
         if (currentProject) {
-            currentProject.description = newDescription;
+            currentProject.description = project.description;
             saveUser();
             return user;
         }
@@ -162,10 +164,10 @@ export default async function todoListController(userName) {
 
     }
 
-    const deleteTask = function () {
+    const deleteTask = function (task) {
 
-        if (user && currentProject && currentTask) {
-            const objTask = pjController.deleteTask(currentProject, currentTask.title);
+        if (user && currentProject && task) {
+            const objTask = pjController.deleteTask(currentProject, task.title);
             currentTask = null;
             saveUser();
             return objTask;

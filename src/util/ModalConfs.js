@@ -1,4 +1,4 @@
-import { Priority } from "../util/Constants";
+import { Priority, Status } from "../util/Constants";
 
 const modalConfigurations = [
     {
@@ -47,12 +47,27 @@ const modalConfigurations = [
         ]
     },
     {
-        id:"logOutModal",
-        title: "LogOut Modal",
-        header: "Are you sure you want to Quit?",
+        id:"deletePjModal",
+        title: "Delete Project Modal",
+        header: "Are you sure you want to remove this project?",
+        fields: []
+    },
+    {
+        id:"ediTaskModal",
+        title: "Edit Task Modal",
+        header: "",
         fields: [
-            {type: "input", id:"clear-data", name:"clear-data", label:"Do you want to clear your personal data?", tooltip:"Clear your data?", inputType:"checkbox"},
+            {type: "textarea", id:"task-description", name:"task-description", label:"Task Description", tooltip:"Enter the task's description"},
+            {type: "input", id:"task-due-date", name:"task-due-date", label:"Due Date", tooltip:"Enter the task due date", inputType:"date"},
+            {type: "select", id:"task-priority", name:"task-priority", label:"Priority", tooltip:"Select the task priority", options: [{text: "Low", value: Priority.LOW},{text:"Medium", value: Priority.MEDIUM},{text:"High", value: Priority.HIGH}]},
+            {type: "select", id:"task-status", name:"task-status", label:"Status", tooltip:"Select the task status", options: [{text: "To Do", value: Status.TODO},{text:"In Progress", value: Status.IN_PROGRESS},{text:"Done", value: Status.DONE}]},
         ]
+    },
+    {
+        id:"deleteTaskModal",
+        title: "Delete Task Modal",
+        header: "Are you sure you want to remove this task?",
+        fields: []
     },
 ];
 
