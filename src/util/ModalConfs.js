@@ -38,6 +38,22 @@ const modalConfigurations = [
             {type: "select", id:"task-priority", name:"task-priority", label:"Priority", tooltip:"Select the task priority", options: [{text: "Low", value: Priority.LOW},{text:"Medium", value: Priority.MEDIUM},{text:"High", value: Priority.HIGH}]},
         ]
     },
+    {
+        id:"editPjModal",
+        title: "Edit Project Modal",
+        header: "",
+        fields: [
+            {type: "textarea", id:"project-description", name:"project-description", label:"Project Description", tooltip:"Enter the project's description"},
+        ]
+    },
+    {
+        id:"logOutModal",
+        title: "LogOut Modal",
+        header: "Are you sure you want to Quit?",
+        fields: [
+            {type: "input", id:"clear-data", name:"clear-data", label:"Do you want to clear your personal data?", tooltip:"Clear your data?", inputType:"checkbox"},
+        ]
+    },
 ];
 
 export {

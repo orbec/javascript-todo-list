@@ -359,7 +359,12 @@ export default function screenController(){
             contentArea.appendChild(projectContainer);
             contentArea.appendChild(taskContainer);
 
-
+            editProjectBtn.addEventListener("click", (event) => {
+                createModal("editPjModal");
+                const modal = document.getElementById("editPjModal");
+                modal.querySelector("h3").textContent = currentProject.title;
+                document.getElementById("project-description").value = currentProject.description;
+        })
             
         }
 
@@ -374,28 +379,61 @@ export default function screenController(){
 
     function setTasks(){
 
+        const taskBoard = document.createElement("div")
+
+        const todoTasks = document.createElement("div");
+        const inProgressTasks = document.createElement("div");
+        const doneTasks = document.createElement("div")
+
+        todoTasks.classList.add("column");
+        inProgressTasks.classList.add("column");
+        doneTasks.classList.add("column");
+
+        const todoTitle = document.createElement("h2");
+        const inProgressTitle = document.createElement("h2");
+        const doneTitle = document.createElement("h2");
+
+        todoTitle.textContent = "To Do";
+        inProgressTitle.textContent = "In Progress";
+        doneTitle.textContent = "Done";
+
+        todoTasks.appendChild(todoTitle);
+        inProgressTasks.appendChild(inProgressTitle);
+        doneTasks.appendChild(doneTitle);
+
+        todoTasks.id = "to-do";
+        inProgressTasks.id = "in-progress";
+        doneTasks.id = "done";
+
+        todoTasks.dataset.status = "to-do";
+        inProgressTasks.dataset.status = "in-progress";
+        doneTasks.dataset.status = "done";
+
         const taskContainer = document.createElement("div");
 
         const titleContainer = document.createElement("div");
         const taskTitle = document.createElement("h2");
         const taskCreateBtn = document.createElement("button");
-        const todoTasks = document.createElement("div");
-        const inProgressTasks = document.createElement("div");
-        const doneTasks = document.createElement("div")
 
         taskContainer.classList.add("task-container");
         titleContainer.classList.add("title");
         taskCreateBtn.classList.add("create");
-        todoTasks.classList.add("todo");
-        inProgressTasks.classList.add("in-progress");
-        doneTasks.classList.add("done");
 
-        todoTasks.innerHTML = "To Do";
-        inProgressTasks.innerHTML = "In Progress";
-        doneTasks.innerHTML = "Done";
 
         titleContainer.appendChild(taskTitle);
         titleContainer.appendChild(taskCreateBtn);
+
+        todoTasks.addEventListener("dragover", handleDragOver);
+        todoTasks.addEventListener("dragleave", handleDragLeave);
+        todoTasks.addEventListener("drop", handleDrop);
+
+        inProgressTasks.addEventListener("dragover", handleDragOver);
+        inProgressTasks.addEventListener("dragleave", handleDragLeave);
+        inProgressTasks.addEventListener("drop", handleDrop);
+
+        doneTasks.addEventListener("dragover", handleDragOver);
+        doneTasks.addEventListener("dragleave", handleDragLeave);
+        doneTasks.addEventListener("drop", handleDrop);
 
 
         taskTitle.innerHTML = "Tasks";
@@ -439,23 +477,75 @@ export default function screenController(){
     function setTaskLocation(task){
         
         const taskStatus = task.status;
-        console.log(taskStatus);
-        let statusContainer;
-        switch(taskStatus){
-            case "to do":
-                statusContainer = document.querySelector(".todo");
-                break;
-            case "in progress":
-                statusContainer = document.querySelector(".in-progress");
-                break;
-            case "done":
-                statusContainer = document.querySelector(".done");
-        }
 
         const taskDiv = document.createElement("div");
-        taskDiv.innerHTML = `${task.title}, ${task.description}, ${task.dueDate}, ${task.priority}, ${task.status}`;
-        statusContainer.appendChild(taskDiv);
+        taskDiv.classList.add("task");
+        taskDiv.draggable = true;
+        taskDiv.dataset.id = task.title;
 
+        const taskTitle = document.createElement("h3");
+        taskTitle.textContent = task.title;
+
+        const taskPriority = document.createElement("p");
+        taskPriority.textContent = `Priority ${task.priority}`;
+
+        const taskAction = document.createElement("div");
+        taskAction.classList.add("task-action");
+
+        const editBtn = document.createElement("button");
+        editBtn.classList.add("edit");
+        editBtn.addEventListener("click", () => console.log("edit task"));
+
+        const deleteBtn = document.createElement ("button");
+        deleteBtn.classList.add("delete");
+        deleteBtn.addEventListener("click", () => console.log("delete task"));
+
+        taskAction.appendChild(editBtn);
+        taskAction.appendChild(deleteBtn);
+
+        taskDiv.appendChild(taskTitle);
+        taskDiv.appendChild(taskPriority);
+        taskDiv.appendChild(taskAction);
+
+        document.getElementById(task.status.replace(" ", "-")).appendChild(taskDiv);
+
+        taskDiv.addEventListener("dragstart", handleDragStart);
+        taskDiv.addEventListener("dragend", handleDragEnd);
+
+
+    };
+
+    const handleDragStart = (event) => {
+        currentTask = tdController.selectTask(event.target.querySelector("h3").textContent).currentTask;
+        event.target.classList.add("dragging");
+        event.dataTransfer.setData("text/plain", event.target.dataset.id);
+    }
+
+    const handleDragEnd = (event) => {
+        event.target.classList.remove("dragging");
+    }
+
+    const handleDragOver = (event) => {
+        event.preventDefault();
+        event.currentTarget.classList.add("drag-over");
+    }
+
+    const handleDragLeave = (event) => {
+        event.currentTarget.classList.remove("drag-over");
+    }
+
+    const handleDrop = (event) => {
+        event.preventDefault();
+        event.currentTarget.classList.remove("drag-over");
+
+        const taskId = event.dataTransfer.getData("text/plain");
+        const taskElement = document.querySelector(`[data-id='${taskId}']`);
+        const newStatus = event.currentTarget.dataset.status;
+
+        currentTask.status = newStatus.replace("-", " ");
+        user = tdController.updateTask(currentTask);
+
+        event.currentTarget.appendChild(taskElement);
 
     }
 
@@ -477,7 +567,6 @@ export default function screenController(){
     return {
         initialize,
         getCurrentUser,
-        getUser,
     }
 
     

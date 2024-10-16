@@ -174,12 +174,12 @@ export default async function todoListController(userName) {
 
     };
 
-    const updateTask = (newDescription, newDueDate, newPriority, newStatus) => {
-        if (currentTask && currentProject) {
-            currentTask.description = newDescription;
-            currentTask.dueDate = newDueDate;
-            currentTask.priority = newPriority;
-            currentTask.status = newStatus;
+    const updateTask = (task) => {
+        if (task && currentProject) {
+            currentTask.description = task.description;
+            currentTask.dueDate = task.dueDate;
+            currentTask.priority = task.priority;
+            currentTask.status = task.status;
             saveUser();
             return user;
         }
