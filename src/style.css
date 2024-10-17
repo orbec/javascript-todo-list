@@ -37,15 +37,16 @@ form {
 
 .tooltip .tooltip-text {
     visibility: hidden;
-    width: 120px;
+    width: max-content;
     background-color: var(--dark-color);
     color: var(--bright-color);
     text-align: center;
     border-radius: 5px;
-    padding: 5px 0;
+    padding: 5px 10px;
     position: absolute;
     z-index: 1;
-    left: 80%;
+    left: 50%;
+    bottom: 100%;
     margin-left: -60px;
     transition:opacity 0.3s;
     opacity: 0;
@@ -470,7 +471,7 @@ button.delete {
 
 .task h3,
 .task p {
-   text-align: justify;
+   text-align: start;
 }
 
 .task.dragging {
@@ -479,5 +480,45 @@ button.delete {
 
 .column.drag-over {
     background-color: var(--bright-color);
+}
+
+.task .priority {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+}
+
+.task .priority img {
+    width: 30px;
+    height: 30px;
+}
+
+.task .traffic-light {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border-radius: 50%;
+}
+
+.task .traffic-light div {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.task .traffic-light .red {
+    background-color: red;
+}
+
+.task .traffic-light .yellow {
+    background-color: yellow;
+}
+
+.task .traffic-light .green {
+    background-color: green;
 }
 

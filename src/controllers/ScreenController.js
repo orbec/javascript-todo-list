@@ -2,6 +2,9 @@ import "../style.css";
 import todoListController from "./TodoListController";
 import userImage from "../assets/images/avatar-svgrepo-com.svg";
 import projectImg from "../assets/images/folder-share-svgrepo-com.svg";
+import highImg from "../assets/images/high-priority-svgrepo-com.svg";
+import mediumImg from "../assets/images/medium-priority-svgrepo-com.svg";
+import lowImg from "../assets/images/low-priority-svgrepo-com.svg";
 import { modalConfigurations } from "../util/ModalConfs";
 
 export default function screenController(){
@@ -408,7 +411,7 @@ export default function screenController(){
         }
     }
 
-    function setTasks(){
+    const setTasks = () => {
 
         const taskBoard = document.createElement("div")
 
@@ -479,7 +482,7 @@ export default function screenController(){
 
     }
 
-    function showHeaderActionModal(e){
+    const showHeaderActionModal = (e) => {
 
         const modalOption = e.target.querySelector(".tooltip-text").innerHTML;
 
@@ -494,18 +497,18 @@ export default function screenController(){
         }
     }
 
-    function showAddprojectModal(e){
+    const showAddprojectModal = (e) => {
 
         createModal("createPjModal");
     }
 
-    function showAddTaskModel(e){
+    const showAddTaskModel = (e) => {
 
         createModal("createTaskModal");
 
     }
 
-    function setTaskLocation(task){
+    const setTaskLocation = (task) => {
         
         const taskStatus = task.status;
 
@@ -517,15 +520,48 @@ export default function screenController(){
         const taskTitle = document.createElement("h3");
         taskTitle.textContent = task.title;
 
-        const taskPriority = document.createElement("p");
+        const taskDescription = document.createElement("p");
+        taskDescription.textContent = task.description;
+
+        const taskPriority = document.createElement("div");
+        taskPriority.classList.add("priority");
+        taskPriority.classList.add("tooltip");
+
+        const priorityImg = document.createElement("img");
+
+        const tooltipPriotity = document.createElement("span");
+        tooltipPriotity.classList.add("tooltip-text");
 
         if (task.priority === "1"){
-            taskPriority.textContent = `High Priority `;
+            priorityImg.src = highImg;
+            tooltipPriotity.textContent = "High"
         }else if(task.priority === "2"){
-            taskPriority.textContent = `Medium Priority `;
+            priorityImg.src = mediumImg;
+            tooltipPriotity.textContent = "Medium";
         }else{
-            taskPriority.textContent = `Low Priority `;
+            priorityImg.src = lowImg;
+            tooltipPriotity.textContent = "Low";
         }
+
+        taskPriority.appendChild(priorityImg);
+        taskPriority.appendChild(tooltipPriotity);
+
+        const trafficLight = document.createElement("div");
+        trafficLight.classList.add("traffic-light");
+        trafficLight.classList.add("tooltip");
+
+        const color = document.createElement("div");
+        const tooltipDueDate = document.createElement("span");
+        tooltipDueDate.classList.add("tooltip-text");
+
+        
+        validateDueDate(color,task);
+
+        tooltipDueDate.textContent = task.dueDate;
+
+        trafficLight.appendChild(color);
+        trafficLight.appendChild(tooltipDueDate);
+
 
         const taskAction = document.createElement("div");
         taskAction.classList.add("task-action");
@@ -552,7 +588,9 @@ export default function screenController(){
         taskAction.appendChild(deleteBtn);
 
         taskDiv.appendChild(taskTitle);
+        taskDiv.appendChild(taskDescription);
         taskDiv.appendChild(taskPriority);
+        taskDiv.appendChild(trafficLight);
         taskDiv.appendChild(taskAction);
 
         document.getElementById(task.status.replace(" ", "-")).appendChild(taskDiv);
@@ -562,6 +600,24 @@ export default function screenController(){
 
 
     };
+
+    const validateDueDate = (color, task) => {
+
+        const taskDueDate = new Date(task.dueDate);
+        const today = new Date();
+        const timeDifference = (taskDueDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
+        if (task.status !== "done"){
+            if(timeDifference <= 2){
+                color.classList.add("red");
+            }else if (timeDifference > 2 && timeDifference <=  5){
+                color.classList.add("yellow");
+            }else{
+                color.classList.add("green");
+            }
+        }else {
+            color.className = "";
+        }
+    }
 
     const handleDragStart = (event) => {
         currentTask = tdController.selectTask(event.target.querySelector("h3").textContent).currentTask;
@@ -594,18 +650,16 @@ export default function screenController(){
         user = tdController.updateTask(currentTask);
 
         event.currentTarget.appendChild(taskElement);
+        const color = taskElement.querySelector(".traffic-light").querySelector("div");
+        validateDueDate(color, currentTask);
 
     }
 
-    function getCurrentUser(){
+    const getCurrentUser = () => {
         return user;
     }
 
-    function getUser(userName){
-        tdController.getUser(userName);
-    }
-
-    function setCurrentProject(event){
+    const setCurrentProject = (event) => {
         currentProject = tdController.selectProject(event.target.id).currentProject;
         mainContainer.innerHTML = "";
         setSideBar();
