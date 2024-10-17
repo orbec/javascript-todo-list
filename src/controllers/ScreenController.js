@@ -6,6 +6,7 @@ import highImg from "../assets/images/high-priority-svgrepo-com.svg";
 import mediumImg from "../assets/images/medium-priority-svgrepo-com.svg";
 import lowImg from "../assets/images/low-priority-svgrepo-com.svg";
 import { modalConfigurations } from "../util/ModalConfs";
+import { tooltipConfigurations } from "../util/TooltipConfs";
 
 export default function screenController(){
 
@@ -68,7 +69,7 @@ export default function screenController(){
         formGroup.appendChild(tooltip);
 
         return formGroup;
-    }
+    };
 
     const submitForm = (event) => {
 
@@ -149,27 +150,26 @@ export default function screenController(){
                 break;
         }
 
-    }
+    };
 
     const createModal = (modalId) => {
 
         const dialog = document.createElement("dialog");
-        const diagConf = modalConfigurations.filter((modalConf) => modalConf.id === modalId);
-        const conf = diagConf.at(0);
+        const diagConf = modalConfigurations.find(modal => modal.id === modalId);
 
-        if(conf){
+        if(diagConf){
 
-            dialog.id = conf.id;
+            dialog.id = diagConf.id;
 
             const modalHeader = document.createElement("h3");
-            modalHeader.textContent = conf.header;
+            modalHeader.textContent = diagConf.header;
 
             dialog.appendChild(modalHeader);
 
             const form = document.createElement("form");
             form.method = "dialog";
 
-            conf.fields.forEach(field => {
+            diagConf.fields.forEach(field => {
                 form.appendChild(createFormGroup(field));
             });
 
@@ -212,6 +212,27 @@ export default function screenController(){
         dialog.showModal();
 
         
+    };
+
+    const setButtonTooltip = (fieldId) => {
+
+        const btnConf = tooltipConfigurations.find(tooltip => tooltip.id === fieldId);
+        const group = document.createElement("div");
+        group.classList.add("tooltip");
+        if(btnConf){
+            const button = document.createElement(btnConf.type);
+            button.classList.add(btnConf.class);
+
+            const tooltip = document.createElement("span");
+            tooltip.classList.add("tooltip-text");
+            tooltip.textContent = btnConf.tooltip;
+
+            group.appendChild(button);
+            group.appendChild(tooltip);
+        }
+
+        return group;
+        
     }
 
     const initialize = () => {
@@ -222,7 +243,7 @@ export default function screenController(){
         setSideBar();
         setContentArea();
 
-    }
+    };
 
     const setHeader = ()  => {
 
@@ -243,11 +264,17 @@ export default function screenController(){
         header.appendChild(appNameContainer);
         
         if (user){
+
+            const dueSoonTasks = getDueSoonTasks(user);
             const userName = document.createElement("h3");
             const userIcon = document.createElement("img");
-            const news = document.createElement("button");
-            const logOutBtn = document.createElement("button");
-            const tooltipText = document.createElement("span");
+            let news = null;
+            if(dueSoonTasks.length > 0){
+                news = setButtonTooltip("notification");
+            }else{
+                news = setButtonTooltip("no-notification");
+            }
+            const logOutBtn = setButtonTooltip("log-out");
 
             userIcon.src = userImage;
             news.classList.add("notification");
@@ -257,53 +284,95 @@ export default function screenController(){
             userNameContainer.appendChild(userName);
             
             
-            tooltipText.classList.add("tooltip-text");
-            logOutBtn.classList.add("logout");
-            tooltipText.innerHTML = "Log Out";
-            logOutBtn.appendChild(tooltipText);
-            logOutBtn.addEventListener("click", function(e) {
+            logOutBtn.querySelector("button").addEventListener("click", function(e) {
                 showHeaderActionModal(e);
             });
-            logOutBtn.addEventListener("mouseover", () =>{
-                const tooltip = logOutBtn.querySelector(".tooltip-text");
-                tooltip.style.visibility = "visible";
-                tooltip.style.opacity = "1";
-            });
-            logOutBtn.addEventListener("mouseout", () => {
-                const tooltip = logOutBtn.querySelector(".tooltip-text");
-                tooltip.style.visibility = "hidden";
-                tooltip.style.opacity = "0";
-            });
+            news.querySelector("button").addEventListener("click", () => showNotificationModal(getDueSoonTasks(user)));
             headerAction.appendChild(news);
             headerAction.appendChild(logOutBtn);
             header.appendChild(userNameContainer);
             header.appendChild(headerAction);
         }else{
             const headerAction = document.createElement("div");
-            const logInBtn = document.createElement("button");
-            const tooltipText = document.createElement("span");
-            tooltipText.classList.add("tooltip-text");
-            tooltipText.innerHTML = "Log In";
-            logInBtn.classList.add("login");
-            logInBtn.appendChild(tooltipText);
-            logInBtn.addEventListener("click", function(e) {
+            const logInBtn = setButtonTooltip("log-in");
+            logInBtn.querySelector("button").addEventListener("click", function(e) {
                 showHeaderActionModal(e);
             });
-            logInBtn.addEventListener("mouseover", () =>{
-                const tooltip = logInBtn.querySelector(".tooltip-text");
-                tooltip.style.visibility = "visible";
-                tooltip.style.opacity = "1";
-            });
-            logInBtn.addEventListener("mouseout", () => {
-                const tooltip = logInBtn.querySelector(".tooltip-text");
-                tooltip.style.visibility = "hidden";
-                tooltip.style.opacity = "0";
-            });
-
             headerAction.appendChild(logInBtn);
             header.appendChild(headerAction);
 
         }
+    };
+
+    const showNotificationModal = (dueSoonTasks) => {
+        console.log("notifiaction modal");
+        const dialog = document.createElement("dialog");
+        dialog.id = "notificationModal";
+        const modalHeader = document.createElement("h3");
+
+        const dialogButtons = document.createElement("div");
+        dialogButtons.classList.add("dialog-buttons");
+
+        const submitBtn = document.createElement("button");
+        submitBtn.type = "button";
+        submitBtn.textContent = "Got it";
+
+        dialogButtons.appendChild(submitBtn);
+
+        const form = document.createElement("form");
+        form.method = "dialog";
+
+        if(dueSoonTasks.length > 0){
+
+            modalHeader.textContent = "You have notifications";
+
+            dialog.appendChild(modalHeader);
+            
+            dueSoonTasks.forEach(task =>{
+                const field = document.createElement("p");
+                field.innerHTML = `Task <i>${task.taskName}</i> from project <i>${task.projectName}</i> is due soon`;
+                form.appendChild(field);
+                field.style.marginBottom = "1.5rem";
+            })
+
+        }else{
+            modalHeader.textContent = "You do not have notifications";
+
+            dialog.appendChild(modalHeader);
+            
+        }
+        submitBtn.addEventListener("click", (event) => {
+            dialog.close();
+            dialog.remove();
+            
+        });
+        form.appendChild(dialogButtons);
+        dialog.appendChild(form);
+        body.appendChild(dialog);
+        dialog.showModal();
+    }
+
+    const getDueSoonTasks = (user) => {
+
+        const dueSoonTasks = [];
+        if(user){
+            user.projects.forEach(project => {
+                project.tasks.filter(task =>{
+                   const taskDueDate = new Date(task.dueDate);
+                   const today = new Date();
+                   const timeDifference = (taskDueDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
+                   if (task.status !== "done" && timeDifference <= 2){
+
+                       dueSoonTasks.push({
+                           taskName: task.title,
+                           projectName: project.title,
+                       });
+                   }
+               });
+           });
+        }
+        return dueSoonTasks;
+            
     }
 
     const setSideBar = () => {
@@ -339,9 +408,7 @@ export default function screenController(){
             projectTitle.innerHTML = "Projects";
             pjImg.src = projectImg;
 
-            addProjectBtn.addEventListener("click", (event) => {
-                showAddprojectModal(event);
-            });
+            addProjectBtn.addEventListener("click", (event) => createModal("createPjModal"));
 
             projectTitleContainer.appendChild(pjImg);
             projectTitleContainer.appendChild(projectTitle);
@@ -351,7 +418,7 @@ export default function screenController(){
         }
         mainContainer.appendChild(sideBar);
 
-    }
+    };
 
     const setContentArea = () => {
 
@@ -364,16 +431,14 @@ export default function screenController(){
             const projectActionContainer = document.createElement("div");
             const projectTitle = document.createElement("h2");
             const projectDescription = document.createElement("p");
-            const editProjectBtn = document.createElement("button");
-            const deleteProjectBtn = document.createElement("button");
+            const editProjectBtn = setButtonTooltip("project-edit");
+            const deleteProjectBtn = setButtonTooltip("project-delete");
 
             
             projectActionContainer.appendChild(editProjectBtn);
             projectActionContainer.appendChild(deleteProjectBtn);
 
             projectContainer.classList.add("project-info");
-            editProjectBtn.classList.add("edit");
-            deleteProjectBtn.classList.add("delete");
             projectActionContainer.classList.add("action");
 
             projectTitle.innerHTML = `Project: ${currentProject.title}`;
@@ -389,14 +454,14 @@ export default function screenController(){
             contentArea.appendChild(projectContainer);
             contentArea.appendChild(taskContainer);
 
-            editProjectBtn.addEventListener("click", (event) => {
+            editProjectBtn.querySelector("button").addEventListener("click", (event) => {
                 createModal("editPjModal");
                 const modal = document.getElementById("editPjModal");
                 modal.querySelector("h3").textContent = currentProject.title;
                 document.getElementById("project-description").value = currentProject.description;
             });
 
-            deleteProjectBtn.addEventListener("click", (event) => {
+            deleteProjectBtn.querySelector("button").addEventListener("click", (event) => {
                 createModal("deletePjModal");
             });
             
@@ -409,7 +474,7 @@ export default function screenController(){
             currentProject.tasks.map((task) => setTaskLocation(task));
 
         }
-    }
+    };
 
     const setTasks = () => {
 
@@ -447,7 +512,7 @@ export default function screenController(){
 
         const titleContainer = document.createElement("div");
         const taskTitle = document.createElement("h2");
-        const taskCreateBtn = document.createElement("button");
+        const taskCreateBtn = setButtonTooltip("task-create");
 
         taskContainer.classList.add("task-container");
         titleContainer.classList.add("title");
@@ -471,7 +536,7 @@ export default function screenController(){
 
 
         taskTitle.innerHTML = "Tasks";
-        taskCreateBtn.addEventListener("click", (event) => showAddTaskModel(event));
+        taskCreateBtn.querySelector("button").addEventListener("click", (event) => createModal("createTaskModal"));
 
         taskContainer.appendChild(titleContainer);
         taskContainer.appendChild(todoTasks);
@@ -480,11 +545,11 @@ export default function screenController(){
 
         return taskContainer;
 
-    }
+    };
 
     const showHeaderActionModal = (e) => {
 
-        const modalOption = e.target.querySelector(".tooltip-text").innerHTML;
+        const modalOption = e.target.parentElement.querySelector(".tooltip-text").innerHTML;
 
         if (modalOption === "Log In"){
 
@@ -495,18 +560,7 @@ export default function screenController(){
 
             createModal("logOutModal");
         }
-    }
-
-    const showAddprojectModal = (e) => {
-
-        createModal("createPjModal");
-    }
-
-    const showAddTaskModel = (e) => {
-
-        createModal("createTaskModal");
-
-    }
+    };
 
     const setTaskLocation = (task) => {
         
@@ -566,10 +620,9 @@ export default function screenController(){
         const taskAction = document.createElement("div");
         taskAction.classList.add("task-action");
 
-        const editBtn = document.createElement("button");
-        editBtn.classList.add("edit");
-        editBtn.addEventListener("click", (event) => {
-            const taskId = event.target.parentElement.parentElement.dataset.id;
+        const editBtn = setButtonTooltip("task-edit");
+        editBtn.querySelector("button").addEventListener("click", (event) => {
+            const taskId = event.target.parentElement.parentElement.parentElement.dataset.id;
             currentTask = tdController.selectTask(taskId).currentTask;
             createModal("ediTaskModal");
             const modal = document.getElementById("ediTaskModal");
@@ -580,9 +633,8 @@ export default function screenController(){
             document.getElementById("task-status").value = currentTask.status;
         });
 
-        const deleteBtn = document.createElement ("button");
-        deleteBtn.classList.add("delete");
-        deleteBtn.addEventListener("click", () => createModal("deleteTaskModal"));
+        const deleteBtn = setButtonTooltip("task-delete");
+        deleteBtn.querySelector("button").addEventListener("click", () => createModal("deleteTaskModal"));
 
         taskAction.appendChild(editBtn);
         taskAction.appendChild(deleteBtn);
@@ -608,35 +660,35 @@ export default function screenController(){
         const timeDifference = (taskDueDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
         if (task.status !== "done"){
             if(timeDifference <= 2){
-                color.classList.add("red");
+                color.className = "red";
             }else if (timeDifference > 2 && timeDifference <=  5){
-                color.classList.add("yellow");
+                color.className = "yellow";
             }else{
-                color.classList.add("green");
+                color.className = "green";
             }
         }else {
-            color.className = "";
+            color.className = "done";
         }
-    }
+    };
 
     const handleDragStart = (event) => {
         currentTask = tdController.selectTask(event.target.querySelector("h3").textContent).currentTask;
         event.target.classList.add("dragging");
         event.dataTransfer.setData("text/plain", event.target.dataset.id);
-    }
+    };
 
     const handleDragEnd = (event) => {
         event.target.classList.remove("dragging");
-    }
+    };
 
     const handleDragOver = (event) => {
         event.preventDefault();
         event.currentTarget.classList.add("drag-over");
-    }
+    };
 
     const handleDragLeave = (event) => {
         event.currentTarget.classList.remove("drag-over");
-    }
+    };
 
     const handleDrop = (event) => {
         event.preventDefault();
@@ -653,25 +705,17 @@ export default function screenController(){
         const color = taskElement.querySelector(".traffic-light").querySelector("div");
         validateDueDate(color, currentTask);
 
-    }
-
-    const getCurrentUser = () => {
-        return user;
-    }
+    };
 
     const setCurrentProject = (event) => {
         currentProject = tdController.selectProject(event.target.id).currentProject;
         mainContainer.innerHTML = "";
         setSideBar();
         setContentArea();
-    }
+    };
 
     return {
         initialize,
-        getCurrentUser,
     }
-
-    
-
     
 }

@@ -195,6 +195,7 @@ header, footer {
 
 header {
     justify-content: space-between;
+    min-height: 80px;
 }
 
 footer {
@@ -241,6 +242,7 @@ div.user-action {
 button.login,
 button.logout,
 button.notification,
+button.no-notification,
 button.edit,
 button.delete,
 button.create {
@@ -282,30 +284,17 @@ button.logout {
 }
 
 button.notification {
-    background-image: url("./assets/images/notification-13-svgrepo-com.svg");
+    background-image: url("./assets/images/notification-on-svgrepo-com.svg");
+}
+button.no-notification {
+    background-image: url("./assets/images/notification-off-svgrepo-com.svg");
+    
 }
 
 button.login:hover,
 button.logout:hover,
 button.notification:hover {
     background-color: var(--medium-color);
-}
-
-.tooltip-text {
-    visibility: hidden;
-    width: 70px;
-    background-color: var(--dark-color);
-    color: var(--bright-color);
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    bottom: 10%;
-    right: 100%;
-    margin-left: -60px;
-    transition:opacity 0.3s;
-    opacity: 0;
 }
 
 .project-list {
@@ -520,5 +509,11 @@ button.delete {
 
 .task .traffic-light .green {
     background-color: green;
+}
+
+.task .traffic-light .done {
+    background: url("./assets/images/checked-tick-svgrepo-com.svg") no-repeat center center;
+    filter: invert(100%) sepia(97%) saturate(16%) hue-rotate(237deg) brightness(104%) contrast(100%);
+    background-size: cover;
 }
 
