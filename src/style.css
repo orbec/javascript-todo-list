@@ -1,125 +1,126 @@
 @font-face {
-    font-family: "Righteous-Regular";
-    src: 
-        url("./assets/fonts/Righteous-Regular.woff") format("woff"),
-        url("./assets/fonts/Righteous-Regular.woff2") format("woff2");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "Righteous-Regular";
+  src:
+    url("./assets/fonts/Righteous-Regular.woff") format("woff"),
+    url("./assets/fonts/Righteous-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
 }
 
 :root {
-    --dark-color: #52525b;
-    --bright-color: #e4e4e7;
-    --medium-color: #a1a1aa;
+  --dark-color: #52525b;
+  --bright-color: #e4e4e7;
+  --medium-color: #a1a1aa;
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: "Righteous-Regular", 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Righteous-Regular", "Segoe UI", Tahoma, Geneva, Verdana,
+    sans-serif;
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 form {
-    display: grid;
+  display: grid;
 }
 
 .tooltip {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .tooltip .tooltip-text {
-    visibility: hidden;
-    width: max-content;
-    background-color: var(--dark-color);
-    color: var(--bright-color);
-    text-align: center;
-    border-radius: 5px;
-    padding: 5px 10px;
-    position: absolute;
-    z-index: 1;
-    left: 50%;
-    bottom: 100%;
-    margin-left: -60px;
-    transition:opacity 0.3s;
-    opacity: 0;
+  visibility: hidden;
+  width: max-content;
+  background-color: var(--dark-color);
+  color: var(--bright-color);
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 100%;
+  margin-left: -60px;
+  transition: opacity 0.3s;
+  opacity: 0;
 }
 
 .tooltip:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
+  visibility: visible;
+  opacity: 1;
 }
 
 dialog {
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 500px;
-    width: 100%;
-    background-color: var(--bright-color);
-    position: relative;
-    margin: auto;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 500px;
+  width: 100%;
+  background-color: var(--bright-color);
+  position: relative;
+  margin: auto;
 }
 
 dialog h3 {
-    text-align: center;
-    margin-bottom: 24px;
+  text-align: center;
+  margin-bottom: 24px;
 }
 
 dialog::backdrop {
-    background: rgba(0, 0, blue0, 0.5);
+  background: rgba(0, 0, blue0, 0.5);
 }
 
 .form-group {
-    position: relative;
-    margin-bottom: 24px;
+  position: relative;
+  margin-bottom: 24px;
 }
 
 .form-group input,
 .form-group textarea,
 .form-group select {
-    padding: 12px;
-    border: 1px solid var(--bright-color);
-    border-radius: 4px;
-    width: 100%;
-    font-size: 16px;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    
+  padding: 12px;
+  border: 1px solid var(--bright-color);
+  border-radius: 4px;
+  width: 100%;
+  font-size: 16px;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 
 .form-group input[type="checkbox"] {
-    width: auto;
-    transform: scale(1.5);
+  width: auto;
+  transform: scale(1.5);
 }
 
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
-    border-color: var(--medium-color);
-    box-shadow: 0 0 5px var(--dark-color);
-    outline: none;
-    
+  border-color: var(--medium-color);
+  box-shadow: 0 0 5px var(--dark-color);
+  outline: none;
 }
 
 .form-group label {
-    position: absolute;
-    top: 50%;
-    left:  12px;
-    transform: translateY(-50%);
-    background: white;
-    padding: 0 5px;
-    transition: 0.3s;
-    pointer-events: none;
-    opacity: 0.7;
-    font-size: 16px;
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  background: white;
+  padding: 0 5px;
+  transition: 0.3s;
+  pointer-events: none;
+  opacity: 0.7;
+  font-size: 16px;
 }
 
 .form-group input:focus + label,
@@ -128,115 +129,114 @@ dialog::backdrop {
 .form-group textarea:not(:placeholder-shown) + label,
 .form-group select:focus + label,
 .form-group select:not(:placeholder-shown) + label {
-    top: -14px;
-    left: 12px;
-    font-size: 14px;
-    opacity: 1;
-    background-color: var(--bright-color);
-    
+  top: -14px;
+  left: 12px;
+  font-size: 14px;
+  opacity: 1;
+  background-color: var(--bright-color);
 }
 
 .form-group input[type="checkbox"] + label {
-    top: 50%;
-    left: 16px;
-    font-size: 14px;
-    opacity: 1;
-    background-color: var(--bright-color);
+  top: 50%;
+  left: 16px;
+  font-size: 14px;
+  opacity: 1;
+  background-color: var(--bright-color);
 }
 
 .dialog-buttons,
 .task-action {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .dialog-buttons button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border: none;border-radius: 4px;
-    background-color: var(--dark-color);
-    color: var(--bright-color);
-    transition: background-color 0.3s;
-
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--dark-color);
+  color: var(--bright-color);
+  transition: background-color 0.3s;
 }
 
 .dialog-buttons button:hover {
-    background-color: black;
+  background-color: black;
 }
 
 #cancel-button {
-    background-color: var(--bright-color);
-    border: 1px solid var(--dark-color);
-    color: var(--dark-color);
+  background-color: var(--bright-color);
+  border: 1px solid var(--dark-color);
+  color: var(--dark-color);
 }
 
 #cancel-button:hover {
-    color: var(--bright-color);
-    background-color: black;
+  color: var(--bright-color);
+  background-color: black;
 }
 
 button:hover {
-    transition: background-color 0.3s ease;
-    border-radius: 4px;
-    background-color: var(--bright-color);
-
+  transition: background-color 0.3s ease;
+  border-radius: 4px;
+  background-color: var(--bright-color);
 }
 
-header, footer {
-    background-color: var(--dark-color);
-    color: var(--bright-color);
-    display: flex;
-    padding: 10px;
-    
-    align-items: center;
+header,
+footer {
+  background-color: var(--dark-color);
+  color: var(--bright-color);
+  display: flex;
+  padding: 10px;
+
+  align-items: center;
 }
 
 header {
-    justify-content: space-between;
-    min-height: 80px;
+  justify-content: space-between;
+  min-height: 80px;
 }
 
 footer {
-    justify-content: center;
+  justify-content: center;
 }
 
 .main-container {
-    display: grid;
-    grid-template-columns: 2fr 10fr;
-    grid-template-areas: "sidebar content";
-    flex: 1;
+  display: grid;
+  grid-template-columns: 2fr 10fr;
+  grid-template-areas: "sidebar content";
+  flex: 1;
 }
 
 .side-bar {
-    background-color: var(--medium-color);
-    grid-area: sidebar;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
+  background-color: var(--medium-color);
+  grid-area: sidebar;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
 .content-area {
-    background-color: var(--bright-color);
-    color:var(--dark-color);
-    grid-area: content;
+  background-color: var(--bright-color);
+  color: var(--dark-color);
+  grid-area: content;
 }
 
 div.user-info {
-    display: flex;
-    flex: 1;
-    align-items: center;
-    justify-content: center;
-    gap: 1%;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 1%;
 }
 
 div.user-action {
-    flex: 1;
-    display: flex;
-    justify-content: end;
-    gap: 20%;
+  flex: 1;
+  display: flex;
+  justify-content: end;
+  gap: 20%;
 }
 
 button.login,
@@ -246,274 +246,270 @@ button.no-notification,
 button.edit,
 button.delete,
 button.create {
-    width: 30px;
-    height: 30px;
-    background-repeat: no-repeat;
-    background-size: 80%;
-    background-position: center;
-    position: relative;
-    display: inline-block;
-    border: none;
-    border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  background-repeat: no-repeat;
+  background-size: 80%;
+  background-position: center;
+  position: relative;
+  display: inline-block;
+  border: none;
+  border-radius: 50%;
 }
 
 .title-container {
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   margin-top: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10%;
 }
 
 div.user-info img,
 div.side-bar img {
-    width: 40px;
-    height: 40px;
+  width: 40px;
+  height: 40px;
 }
 
 div.user-info img {
-    background-color: var(--bright-color);
-    border-radius: 50%;
+  background-color: var(--bright-color);
+  border-radius: 50%;
 }
 
 button.login {
-    background-image: url("./assets/images/log-in-04-svgrepo-com.svg");
+  background-image: url("./assets/images/log-in-04-svgrepo-com.svg");
 }
 
 button.logout {
-    background-image: url("./assets/images/log-out-04-svgrepo-com.svg");
+  background-image: url("./assets/images/log-out-04-svgrepo-com.svg");
 }
 
 button.notification {
-    background-image: url("./assets/images/notification-on-svgrepo-com.svg");
+  background-image: url("./assets/images/notification-on-svgrepo-com.svg");
 }
 button.no-notification {
-    background-image: url("./assets/images/notification-off-svgrepo-com.svg");
-    
+  background-image: url("./assets/images/notification-off-svgrepo-com.svg");
 }
 
 button.login:hover,
 button.logout:hover,
 button.notification:hover {
-    background-color: var(--medium-color);
+  background-color: var(--medium-color);
 }
 
 .project-list {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: center;
-    padding: 10%;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 10%;
+  gap: 1rem;
 }
 
 #add-project {
-    background-color: inherit;
-    border: none;
-    display: inline-flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    font-size: 1.2rem;
-    margin-top: 10px;
-    align-items: center;
-    margin-left: 10px;
-    align-self: flex-start;
+  background-color: inherit;
+  border: none;
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  font-size: 1.2rem;
+  margin-top: 10px;
+  align-items: center;
+  margin-left: 10px;
+  align-self: flex-start;
 }
 
 #add-project:hover {
-    background-color: var(--dark-color);
-    color: var(--bright-color);
+  background-color: var(--dark-color);
+  color: var(--bright-color);
 }
 
 #add-project::before {
-    content: "";
-    background: url("./assets/images/add-folder-svgrepo-com.svg") no-repeat center center;
-    height: 25px;
-    width: 25px;
-    background-size: contain;
-
+  content: "";
+  background: url("./assets/images/add-folder-svgrepo-com.svg") no-repeat center
+    center;
+  height: 25px;
+  width: 25px;
+  background-size: contain;
 }
 
 .project-list button {
-    width: 100%;
-    background-color: inherit;
-    color: var(--bright-color);
-    border: none;
-    border-bottom: 2px solid;
-    font-size: 1.5rem;
-    
+  width: 100%;
+  background-color: inherit;
+  color: var(--bright-color);
+  border: none;
+  border-bottom: 2px solid;
+  font-size: 1.5rem;
 }
 
 .project-list button:hover {
-    background-color: var(--dark-color);
-    border-bottom: var(--dark-color);
+  background-color: var(--dark-color);
+  border-bottom: var(--dark-color);
 }
 
 .project-list button.activated {
-    background-color: var(--bright-color);
-    border-bottom: var(--bright-color);
-    color: var(--dark-color);
-    border-radius: 4px;
+  background-color: var(--bright-color);
+  border-bottom: var(--bright-color);
+  color: var(--dark-color);
+  border-radius: 4px;
 }
 
 .content-area .project-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    width: 70%;
-    padding: 1rem;
-
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 70%;
+  padding: 1rem;
 }
 
 .project-info button.edit,
 .project-info button.delete,
 .task-container .title button.create {
-    background-color: var(--bright-color);
+  background-color: var(--bright-color);
 }
 
 button.edit:hover,
 button.delete:hover,
 .task-container .title button.create:hover {
-    background-color: var(--medium-color);
+  background-color: var(--medium-color);
 }
 
 button.edit {
-    background-image: url("./assets/images/pencil.svg");
-
+  background-image: url("./assets/images/pencil.svg");
 }
 
 button.delete {
-    background-image: url("./assets/images/trash-svgrepo-com.svg");
-
+  background-image: url("./assets/images/trash-svgrepo-com.svg");
 }
 
 .project-info .action {
-    display: flex;
-    gap: 1rem;
+  display: flex;
+  gap: 1rem;
 }
 
 .content-area .task-container {
-    display: grid;
-    grid-template-areas: "title title title"
-        "left center right";
-    border-top: 2px solid;
-    grid-template-rows: 1fr 10fr ;
-    gap: 20px;
-    grid-template-columns: 1fr 1fr 1fr;
-    padding: 0 20px 20px 20px;
+  display: grid;
+  grid-template-areas:
+    "title title title"
+    "left center right";
+  border-top: 2px solid;
+  grid-template-rows: 1fr 10fr;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0 20px 20px 20px;
 }
 
 .task-container .title {
-    grid-area: title;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 30px;
-    margin: 1.5rem;
+  grid-area: title;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 30px;
+  margin: 1.5rem;
 }
 
 .task-container .title button.create {
-    background-image: url("./assets/images/todo-add-svgrepo-com.svg");
+  background-image: url("./assets/images/todo-add-svgrepo-com.svg");
 }
 
 .column {
-    width: 100%;
-    height: auto;
-    justify-self: center;
-    text-align: center;
-    min-height: 500px;
-    background-color: var(--medium-color);
-    border-radius: 8px;
-    box-shadow: 0 2px 10 px var(--dark-color);
-    padding: 20px;
+  width: 100%;
+  height: auto;
+  justify-self: center;
+  text-align: center;
+  min-height: 500px;
+  background-color: var(--medium-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 10 px var(--dark-color);
+  padding: 20px;
 }
 
 .column h2 {
-    text-align: center;
-    margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .task-container .todo {
-    grid-area: left;
-    
+  grid-area: left;
 }
 
 .task-container .in-progress {
-    grid-area: center;
+  grid-area: center;
 }
 
 .task-container .done {
-    grid-area: right;
+  grid-area: right;
 }
 
 .task {
-    background-color: var(--dark-color);
-    color: var(--bright-color);
-    border-radius: 4px;
-    padding: 10px;
-    margin-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    cursor: grab;
-    position: relative;
+  background-color: var(--dark-color);
+  color: var(--bright-color);
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: grab;
+  position: relative;
 }
 
 .task h3,
 .task p {
-   text-align: start;
+  text-align: start;
 }
 
 .task.dragging {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 .column.drag-over {
-    background-color: var(--bright-color);
+  background-color: var(--bright-color);
 }
 
 .task .priority {
-    width: 30px;
-    height: 30px;
-    position: absolute;
-    top: 10px;
-    right: 50px;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 10px;
+  right: 50px;
 }
 
 .task .priority img {
-    width: 30px;
-    height: 30px;
+  width: 30px;
+  height: 30px;
 }
 
 .task .traffic-light {
-    width: 30px;
-    height: 30px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border-radius: 50%;
 }
 
 .task .traffic-light div {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
 }
 
 .task .traffic-light .red {
-    background-color: red;
+  background-color: red;
 }
 
 .task .traffic-light .yellow {
-    background-color: yellow;
+  background-color: yellow;
 }
 
 .task .traffic-light .green {
-    background-color: green;
+  background-color: green;
 }
 
 .task .traffic-light .done {
-    background: url("./assets/images/checked-tick-svgrepo-com.svg") no-repeat center center;
-    filter: invert(100%) sepia(97%) saturate(16%) hue-rotate(237deg) brightness(104%) contrast(100%);
-    background-size: cover;
+  background: url("./assets/images/checked-tick-svgrepo-com.svg") no-repeat
+    center center;
+  filter: invert(100%) sepia(97%) saturate(16%) hue-rotate(237deg)
+    brightness(104%) contrast(100%);
+  background-size: cover;
 }
-
